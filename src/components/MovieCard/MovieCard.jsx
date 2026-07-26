@@ -7,9 +7,9 @@ const calculateDuration = (duration_minutes) => {
   return `${hours}h ${minutes}m`;
 };
 
-const MovieCard = ({ title, genre, poster_path, duration_minutes }) => {
+const MovieCard = ({ title, genre, poster_path, duration_minutes, onClick }) => {
   return (
-    <button className="movie-card">
+    <button className="movie-card" type="button" onClick={onClick}>
       <img className="movie-poster" src={poster_path} alt={title} />
       <h1>{title}</h1>
       <p className="movie-genre">{genre}</p>

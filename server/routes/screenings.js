@@ -10,12 +10,16 @@ screeningsRouter.get("/", (request, response) => {
       `
       SELECT
         screenings.id,
+        screenings.movie_id,
+        screenings.room_id,
         screenings.screening_date,
         screenings.screening_time,
-        screenings.room_name,
+        rooms.row_count,
+        rooms.seats_per_row,
         movies.title AS movie_title
       FROM screenings
       JOIN movies ON movies.id = screenings.movie_id
+      JOIN rooms ON rooms.id = screenings.room_id
       ORDER BY screenings.screening_date, screenings.screening_time
       `,
     )
@@ -33,17 +37,27 @@ screeningsRouter.get("/:movieId", (request, response) => {
       `
       SELECT
         screenings.id,
+        screenings.movie_id,
+        screenings.room_id,
         screenings.screening_date,
         screenings.screening_time,
-        screenings.room_name,
+        rooms.row_count,
+        rooms.seats_per_row,
         movies.title AS movie_title
       FROM screenings
       JOIN movies ON movies.id = screenings.movie_id
+      JOIN rooms ON rooms.id = screenings.room_id
       WHERE movies.id = ?
       ORDER BY screenings.screening_date, screenings.screening_time
       `,
     )
     .all(movieId);
+
+  if (screenings.length === 0) {
+    return response
+      .status(404)
+      .json({ error: "No screenings found for this movie." });
+  }
 
   response.json(screenings);
 });

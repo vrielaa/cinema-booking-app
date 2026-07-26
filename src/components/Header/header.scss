@@ -5,7 +5,7 @@
   height: 15rem;
 
   background-color: rgb(51, 22, 17);
-  box-shadow: 0 0.6rem 1.6rem rgba(190, 145, 64, 0.35);
+  box-shadow: 0 0.6rem 1.6rem var(--gold-border-color);
 }
 
 .header-nav {
@@ -83,7 +83,7 @@
 .decorator-rectangle::before {
   transform: translateY(0.5rem);
 
-  background-color: rgba(190, 145, 64, 0.45);
+  background-color: var(--gold-border-color);
   filter: blur(0.7rem);
 }
 

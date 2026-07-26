@@ -1,0 +1,241 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background-color: rgba(12, 12, 11, 0.72);
+  backdrop-filter: blur(0.5rem);
+}
+
+.modal {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 20rem 1fr;
+  grid-template-areas:
+    "poster info"
+    "screenings screenings";
+  gap: 2.4rem 3rem;
+
+  width: min(92vw, 86rem);
+  max-height: 82vh;
+  overflow: auto;
+
+  padding: 3rem;
+
+  background-color: rgb(18, 19, 17);
+  border: 0.2rem solid var(--gold-border-color);
+  border-radius: 0.6rem;
+  box-shadow:
+    0 0 0 0.1rem rgba(251, 229, 182, 0.14),
+    0 2rem 5rem rgba(0, 0, 0, 0.62),
+    0 0 2.4rem rgba(190, 145, 64, 0.22);
+  color: rgb(251, 229, 182);
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 2.2rem;
+  right: 2.4rem;
+
+  width: 4rem;
+  height: 4rem;
+
+  border: 0;
+  background: none;
+  color: rgb(190, 145, 64);
+  cursor: pointer;
+  font: inherit;
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+.modal-close-button:hover,
+.modal-close-button:focus-visible {
+  color: rgb(251, 229, 182);
+}
+
+.modal-poster-frame {
+  grid-area: poster;
+
+  align-self: start;
+
+  padding: 0.5rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.75);
+  border-radius: 0.4rem;
+  box-shadow: 0 0 1.4rem rgba(0, 0, 0, 0.45);
+}
+
+.modal-poster {
+  display: block;
+
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+
+  border-radius: 0.2rem;
+}
+
+.modal .movie-info {
+  grid-area: info;
+
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 1.2rem;
+
+  padding-right: 5rem;
+}
+
+.modal .movie-info h1 {
+  font-size: 3.2rem;
+  line-height: 1.1;
+}
+
+.modal .movie-duration {
+  color: rgb(232, 216, 181);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.modal .movie-genre {
+  width: max-content;
+
+  padding: 0.3rem 0.7rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.45);
+  color: rgb(232, 216, 181);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.modal .movie-description {
+  max-width: 52rem;
+
+  color: rgba(251, 229, 182, 0.82);
+  font-size: 1.7rem;
+  line-height: 1.5;
+}
+
+.screenings-info {
+  grid-area: screenings;
+
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.screenings-title {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+
+  margin-bottom: 1.8rem;
+
+  color: rgb(232, 216, 181);
+  font-size: 2.2rem;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.screenings-title::before,
+.screenings-title::after {
+  content: "";
+
+  flex: 1;
+
+  height: 0.1rem;
+
+  background-color: rgba(190, 145, 64, 0.5);
+}
+
+.screenings-table {
+  width: 100%;
+  min-width: 66rem;
+
+  border-collapse: collapse;
+  border: 0.1rem solid rgba(190, 145, 64, 0.5);
+}
+
+.screenings-table th,
+.screenings-table td {
+  padding: 1rem 1.4rem;
+
+  border-bottom: 0.1rem solid rgba(190, 145, 64, 0.25);
+  color: rgb(232, 216, 181);
+  font-size: 1.8rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.screenings-table th {
+  color: rgb(251, 229, 182);
+  font-weight: 700;
+}
+
+.screenings-table-body .screenings-table-row:last-child td {
+  border-bottom: 0;
+}
+
+.screenings-table-body .screenings-table-row:hover {
+  background-color: rgba(251, 229, 182, 0.06);
+}
+
+.screening-select-button {
+  min-width: 9rem;
+  padding: 0.8rem 1.4rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.65);
+  border-radius: 0.4rem;
+  background-color: rgb(22, 102, 105);
+  box-shadow: inset 0 0 0 0.1rem rgba(251, 229, 182, 0.12);
+  color: rgb(251, 229, 182);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.screening-select-button:hover,
+.screening-select-button:focus-visible {
+  background-color: rgb(28, 126, 129);
+}
+
+.screenings-empty {
+  padding: 2rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.4);
+  color: rgba(251, 229, 182, 0.82);
+  font-size: 1.6rem;
+}
+
+@media (max-width: 760px) {
+  .modal {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "poster"
+      "info"
+      "screenings";
+
+    max-height: 86vh;
+    padding: 2rem;
+  }
+
+  .modal-poster-frame {
+    width: min(100%, 20rem);
+  }
+
+  .modal .movie-info {
+    padding-right: 4rem;
+  }
+
+  .modal .movie-info h1 {
+    font-size: 2.6rem;
+  }
+}
