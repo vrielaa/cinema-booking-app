@@ -1,0 +1,20 @@
+import "./movie_card.scss";
+
+const calculateDuration = (duration_minutes) => {
+  const hours = Math.floor(duration_minutes / 60);
+  const minutes = duration_minutes % 60;
+
+  return `${hours}h ${minutes}m`;
+};
+
+const MovieCard = ({ title, poster_path, duration_minutes }) => {
+  return (
+    <button className="movie-card">
+      <img className="movie-poster" src={poster_path} alt={title} />
+      <h1>{title}</h1>
+      <p>Duration: {calculateDuration(duration_minutes)}</p>
+    </button>
+  );
+};
+
+export default MovieCard;

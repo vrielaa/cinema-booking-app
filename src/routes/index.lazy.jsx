@@ -1,13 +1,8 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/")({
-  component: Index,
-});
+// routes/index.lazy.jsx
+import Movies from "../components/Movies/Movies";
 
-function Index() {
-  return (
-    <div className="index">
-     <p>todo</p>
-    </div>
-  );
-}
+export const Route = createLazyFileRoute("/")({
+  component: Movies,
+});
