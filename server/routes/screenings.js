@@ -3,8 +3,7 @@ import { db } from "../db/database.js";
 
 export const screeningsRouter = Router();
 
-
-// get all screenings 
+// get all screenings
 screeningsRouter.get("/", (request, response) => {
   const screenings = db
     .prepare(
