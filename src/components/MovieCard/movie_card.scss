@@ -1,5 +1,5 @@
 .movie-card {
-      border: none;
+  border: none;
   padding: 0;
   background: none;
   font: inherit;
@@ -15,6 +15,16 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   color: rgb(251, 229, 182);
+}
+
+.movie-duration {
+  font-size: 1.4rem;
+  margin-top: auto;
+}
+
+.movie-genre {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
 }
 
 .movie-poster {

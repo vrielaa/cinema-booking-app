@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS movies (
   id INTEGER PRIMARY KEY,
   title TEXT NOT NULL,
+  genre TEXT NOT NULL,
   description TEXT,
   duration_minutes INTEGER NOT NULL,
   poster_path TEXT NOT NULL

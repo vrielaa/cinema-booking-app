@@ -28,6 +28,7 @@ function Movies() {
         <MovieCard
           key={movie.id}
           title={movie.title}
+          genre={movie.genre}
           poster_path={movie.poster_path}
           duration_minutes={movie.duration_minutes}
         />
