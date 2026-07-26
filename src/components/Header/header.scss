@@ -1,7 +1,9 @@
 .header {
   position: relative;
-  height: 15rem;
   overflow: hidden;
+
+  height: 15rem;
+
   background-color: rgb(51, 22, 17);
   box-shadow: 0 0.6rem 1.6rem rgba(190, 145, 64, 0.35);
 }
@@ -9,38 +11,46 @@
 .header-nav {
   display: flex;
   justify-content: center;
+
   width: 100%;
   height: 100%;
+
   padding: 2rem 0;
-}
-
-.logo {
-  position: relative;
-  width: 15rem;
-  height: 3rem;
-  background-image: url("/cinema-logo.webp");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.logo-text {
-  position: relative;
-  width: max-content;
-
-  font-family: var(--font-display);
-  font-size: 3rem;
-  color: rgb(251, 229, 182);
 }
 
 .logo-link {
   display: flex;
-  height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+
+  height: 100%;
+
   color: inherit;
   text-decoration: none;
+}
+
+.logo {
+  position: relative;
+
+  width: 15rem;
+  height: 3rem;
+
+  background-image: url("/cinema-logo.webp");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.logo-text {
+  position: relative;
+
+  width: max-content;
+
+  font-family: var(--font-display);
+  font-size: 3rem;
+
+  color: rgb(251, 229, 182);
 }
 
 .logo-bottom {
@@ -48,19 +58,20 @@
 }
 
 .decorator-rectangle {
+  --decorator-mask: none;
+
   position: absolute;
   top: 14.9rem;
   left: 50%;
 
   width: 20rem;
   height: 5rem;
-
-  --decorator-mask: none;
 }
 
 .decorator-rectangle::before,
 .decorator-rectangle::after {
   content: "";
+
   position: absolute;
   inset: 0;
 
@@ -70,9 +81,10 @@
 }
 
 .decorator-rectangle::before {
+  transform: translateY(0.5rem);
+
   background-color: rgba(190, 145, 64, 0.45);
   filter: blur(0.7rem);
-  transform: translateY(0.5rem);
 }
 
 .decorator-rectangle::after {
@@ -80,7 +92,6 @@
 }
 
 .left-decorator-rectangle {
-  transform: translateX(calc(-100% + 0.05rem));
   --decorator-mask: radial-gradient(
     ellipse 40rem 10rem at left bottom,
     transparent 0 49.45%,
@@ -88,10 +99,11 @@
     rgba(0, 0, 0, 0.75) 50.15%,
     black 50.45%
   );
+
+  transform: translateX(calc(-100% + 0.05rem));
 }
 
 .right-decorator-rectangle {
-  transform: translateX(-0.05rem);
   --decorator-mask: radial-gradient(
     ellipse 40rem 10rem at right bottom,
     transparent 0 49.45%,
@@ -99,4 +111,6 @@
     rgba(0, 0, 0, 0.75) 50.15%,
     black 50.45%
   );
+
+  transform: translateX(-0.05rem);
 }
