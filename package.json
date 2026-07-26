@@ -1,0 +1,40 @@
+{
+  "name": "padre-ginos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.{js,jsx,css,html}\"",
+    "lint": "eslint",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.59.7",
+    "@tanstack/react-query-devtools": "^5.59.13",
+    "@tanstack/router-devtools": "^1.65.0",
+    "@tanstack/router-plugin": "^1.65.0",
+    "@vitejs/plugin-react": "^6.0.4",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.1",
+    "globals": "^15.9.0",
+    "prettier": "^3.9.6",
+    "vite": "^8.1.5"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.59.13",
+    "@tanstack/react-router": "^1.65.0",
+    "better-sqlite3": "^13.0.1",
+    "express": "^5.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
