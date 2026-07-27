@@ -9,6 +9,7 @@ const Modal = ({
   duration_minutes,
   poster_path,
   screenings,
+  screeningsLoading,
   close,
 }) => {
   const modalRef = useRef(null);
@@ -53,43 +54,54 @@ const Modal = ({
         </div>
 
         <div className="screenings-info">
-          {screenings.length > 0 ? (
-            <>
-              <h2 className="screenings-title">Screenings</h2>
-              <table className="screenings-table">
-                <thead className="screenings-table-header">
-                  <tr className="screenings-table-row">
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Room</th>
-                    <th>Seats</th>
-                    <th></th>
+          <>
+            <h2 className="screenings-title">Screenings</h2>
+            <table className="screenings-table">
+              <thead className="screenings-table-header">
+                <tr className="screenings-table-row">
+                  <th className="screenings-table-header-cell">Date</th>
+                  <th className="screenings-table-header-cell">Time</th>
+                  <th className="screenings-table-header-cell">Room</th>
+                  <th className="screenings-table-header-cell">Seats</th>
+                  <th className="screenings-table-header-cell"></th>
+                </tr>
+              </thead>
+              <tbody className="screenings-table-body">
+                {screeningsLoading ? (
+                  <tr className="screenings-table-loading-row">
+                    <td colSpan="5" className="screenings-loading">
+                      Loading screenings...
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="screenings-table-body">
-                  {screenings.map((screening) => (
+                ) : (
+                  screenings.map((screening) => (
                     <tr key={screening.id} className="screenings-table-row">
-                      <td>{screening.screening_date}</td>
-                      <td>{screening.screening_time}</td>
-                      <td>Room #{screening.room_id}</td>
-                      <td>
+                      <td className="screenings-table-cell">
+                        {screening.screening_date}
+                      </td>
+                      <td className="screenings-table-cell">
+                        {screening.screening_time}
+                      </td>
+                      <td className="screenings-table-cell">
+                        Room #{screening.room_id}
+                      </td>
+                      <td className="screenings-table-cell">
                         {screening.row_count} x {screening.seats_per_row}
                       </td>
                       <td>
-                        <button className="screening-select-button" type="button">
+                        <button
+                          className="screening-select-button"
+                          type="button"
+                        >
                           Select
                         </button>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          ) : (
-            <p className="screenings-empty">
-              No screenings available for this movie.
-            </p>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </>
         </div>
       </div>
     </div>,

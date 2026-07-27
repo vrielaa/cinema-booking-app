@@ -164,8 +164,8 @@
   border: 0.1rem solid rgba(190, 145, 64, 0.5);
 }
 
-.screenings-table th,
-.screenings-table td {
+.screenings-table-header-cell,
+.screenings-table-cell {
   padding: 1rem 1.4rem;
 
   border-bottom: 0.1rem solid rgba(190, 145, 64, 0.25);
@@ -175,7 +175,7 @@
   white-space: nowrap;
 }
 
-.screenings-table th {
+.screenings-table-header-cell {
   color: rgb(251, 229, 182);
   font-weight: 700;
 }
@@ -200,6 +200,7 @@
   cursor: pointer;
   font: inherit;
   font-weight: 700;
+  font-size: 1.6rem;
 }
 
 .screening-select-button:hover,
@@ -238,4 +239,13 @@
   .modal .movie-info h1 {
     font-size: 2.6rem;
   }
+}
+
+.screenings-loading {
+  color: rgb(251, 229, 182);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+  text-justify: center;
 }
