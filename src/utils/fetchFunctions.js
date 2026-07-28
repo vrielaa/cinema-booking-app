@@ -1,0 +1,156 @@
+export async function fetchRoom(
+  roomId,
+  setRowLabels,
+  setSeatNumbers,
+  setRoomLoading,
+) {
+  setRoomLoading(true);
+  try {
+    const response = await fetch(`/api/rooms/${roomId}`);
+    const data = await response.json();
+
+    const rowLabels = Array.from({ length: data.row_count }, (_, index) =>
+      String.fromCharCode(65 + index),
+    );
+
+    const seatNumbers = Array.from(
+      { length: data.seats_per_row },
+      (_, index) => index + 1,
+    );
+
+    setRowLabels(rowLabels);
+    setSeatNumbers(seatNumbers);
+
+    return data; // Return the fetched room data for further use
+  } catch (error) {
+    console.error("Error fetching room info:", error);
+  } finally {
+    setRoomLoading(false);
+  }
+}
+
+export async function fetchMovie(movieId, setMovie, setMovieLoading) {
+  setMovieLoading(true);
+  try {
+    const response = await fetch(`/api/movies/${movieId}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setMovie(data);
+  } catch (error) {
+    console.error("Error fetching movie:", error);
+  } finally {
+    setMovieLoading(false);
+  }
+}
+
+export async function fetchScreeningFromScreeningId(
+  screeningId,
+  setScreening,
+  setScreeningLoading,
+) {
+  setScreeningLoading(true);
+  try {
+    const response = await fetch(`/api/screenings/screening/${screeningId}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setScreening(data);
+
+    return data; // Return the fetched screening data for further use
+  } catch (error) {
+    console.error("Error fetching screening:", error);
+  } finally {
+    setScreeningLoading(false);
+  }
+}
+
+export async function fetchScreeningRoomMovie(
+  screeningId,
+  setScreening,
+  setScreeningLoading,
+  setRowLabels,
+  setSeatNumbers,
+  setRoomLoading,
+  setMovie,
+  setMovieLoading,
+) {
+  setScreeningLoading(true);
+  setRoomLoading(true);
+  setMovieLoading(true);
+
+  try {
+    let roomResponse = null;
+
+    const screeningResponse = await fetchScreeningFromScreeningId(
+      screeningId,
+      setScreening,
+      setScreeningLoading,
+    );
+    if (screeningResponse) {
+      const roomId = screeningResponse.room_id;
+      roomResponse = await fetchRoom(
+        roomId,
+        setRowLabels,
+        setSeatNumbers,
+        setRoomLoading,
+      );
+    }
+
+    if (screeningResponse && roomResponse) {
+      const movieId = screeningResponse.movie_id;
+      const movieResponse = await fetch(`/api/movies/${movieId}`);
+      if (!movieResponse.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const movieData = await movieResponse.json();
+      setMovie(movieData);
+    }
+  } catch (error) {
+    console.error("Error fetching screening and room:", error);
+  } finally {
+    setScreeningLoading(false);
+    setRoomLoading(false);
+    setMovieLoading(false);
+  }
+}
+
+export async function fetchMovies(setMovies, setMoviesLoading) {
+  setMoviesLoading(true);
+
+  try {
+    const response = await fetch("/api/movies");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setMovies(data);
+  } catch (error) {
+    console.error("Error fetching movies:", error);
+  } finally {
+    setMoviesLoading(false);
+  }
+}
+
+export async function fetchScreeningsForMovie(
+  movieId,
+  setScreenings,
+  setScreeningsLoading,
+) {
+  setScreeningsLoading(true);
+
+  try {
+    const response = await fetch(`/api/screenings/${movieId}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setScreenings(data);
+  } catch (error) {
+    console.error("Error fetching screenings:", error);
+  } finally {
+    setScreeningsLoading(false);
+  }
+}

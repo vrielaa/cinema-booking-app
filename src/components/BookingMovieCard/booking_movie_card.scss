@@ -1,0 +1,99 @@
+.booking-movie-card {
+  align-self: start;
+  overflow: hidden;
+
+  border: 0.1rem solid var(--gold-border-color);
+  border-radius: 0.6rem;
+  background-color: rgb(18, 19, 17);
+  box-shadow:
+    0 1.8rem 4rem rgba(0, 0, 0, 0.4),
+    0 0 1.8rem rgba(190, 145, 64, 0.12);
+}
+
+.booking-poster {
+  display: block;
+
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.booking-movie-info {
+  padding: 2.2rem;
+}
+
+.booking-movie-label {
+  margin-bottom: 0.7rem;
+
+  color: rgb(190, 145, 64);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
+}
+
+.booking-movie-title {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+.booking-movie-genre {
+  width: max-content;
+  margin-top: 1.2rem;
+  padding: 0.4rem 0.7rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.45);
+  color: rgb(232, 216, 181);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
+
+.booking-details {
+  display: grid;
+  gap: 1.3rem;
+
+  margin-top: 2.4rem;
+  padding-top: 2rem;
+
+  border-top: 0.1rem solid rgba(190, 145, 64, 0.3);
+}
+
+.booking-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.booking-detail-label {
+  color: rgba(251, 229, 182, 0.58);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.booking-detail-value {
+  color: rgb(232, 216, 181);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .booking-movie-card {
+    display: grid;
+    grid-template-columns: 18rem 1fr;
+  }
+
+  .booking-poster {
+    height: 100%;
+  }
+}
+
+@media (max-width: 660px) {
+  .booking-movie-card {
+    grid-template-columns: 11rem 1fr;
+  }
+
+  .booking-movie-info {
+    padding: 1.8rem;
+  }
+}

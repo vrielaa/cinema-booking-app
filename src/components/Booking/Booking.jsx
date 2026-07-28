@@ -1,0 +1,121 @@
+import "./booking.scss";
+import { useLocation } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
+import BookingMovieCard from "../BookingMovieCard/BookingMovieCard";
+import {
+  fetchMovie,
+  fetchRoom,
+  fetchScreeningRoomMovie,
+} from "../../utils/fetchFunctions";
+
+export default function Booking({ screeningId }) {
+  const screeningFromState = useLocation({
+    select: (location) => location.state?.screening,
+  });
+
+  const [screening, setScreening] = useState(screeningFromState ?? null);
+  const [, setScreeningLoading] = useState(!screeningFromState);
+
+  const [movie, setMovie] = useState(undefined);
+  const [, setMovieLoading] = useState(true);
+
+  const [rowLabels, setRowLabels] = useState(undefined);
+  const [seatNumbers, setSeatNumbers] = useState(undefined);
+  const [, setRoomLoading] = useState(true);
+
+  useEffect(() => {
+    const stateMatchesUrl =
+      screeningFromState &&
+      String(screeningFromState.id) === String(screeningId);
+
+    if (stateMatchesUrl) {
+      setScreening(screeningFromState);
+      setScreeningLoading(false);
+
+      setRoomLoading(true);
+      fetchRoom(
+        screeningFromState.room_id,
+        setRowLabels,
+        setSeatNumbers,
+        setRoomLoading,
+      );
+      fetchMovie(screeningFromState.movie_id, setMovie, setMovieLoading);
+
+      return; // Exit early if the state matches the URL
+    }
+
+    fetchScreeningRoomMovie(
+      screeningId,
+      setScreening,
+      setScreeningLoading,
+      setRowLabels,
+      setSeatNumbers,
+      setRoomLoading,
+      setMovie,
+      setMovieLoading,
+    );
+  }, [screeningId, screeningFromState]);
+
+  return (
+    <section className="booking-page">
+      <div className="booking-heading">
+        <p className="booking-eyebrow">Seat reservation</p>
+        <h1 className="booking-title">Choose your seats</h1>
+        <p className="booking-intro">
+          Select the perfect place and enjoy the show.
+        </p>
+      </div>
+
+      <div className="booking-layout">
+        <BookingMovieCard
+          src={movie?.poster_path}
+          title={movie?.title}
+          genre={movie?.genre}
+          date={screening?.screening_date}
+          time={screening?.screening_time}
+          roomId={screening?.room_id}
+        />
+        <div className="booking-seats-card">
+          <div className="booking-screen-area">
+            <div className="booking-screen"></div>
+            <p className="booking-screen-label">Screen</p>
+          </div>
+
+          <BookingSeatMap rowLabels={rowLabels} seatNumbers={seatNumbers} />
+
+          <div className="booking-legend">
+            <div className="booking-legend-item">
+              <span className="booking-legend-seat booking-legend-available"></span>
+              <span className="booking-legend-label">Available</span>
+            </div>
+            <div className="booking-legend-item">
+              <span className="booking-legend-seat booking-legend-occupied"></span>
+              <span className="booking-legend-label">Occupied</span>
+            </div>
+            <div className="booking-legend-item">
+              <span className="booking-legend-seat booking-legend-selected"></span>
+              <span className="booking-legend-label">Selected</span>
+            </div>
+          </div>
+
+          <div className="booking-summary">
+            <div className="booking-summary-copy">
+              <span className="booking-summary-label">Your seats</span>
+              <strong className="booking-summary-value">
+                No seats selected
+              </strong>
+            </div>
+            <div className="booking-summary-total">
+              <span className="booking-summary-label">Total</span>
+              <strong className="booking-price">$0.00</strong>
+            </div>
+            <button className="booking-confirm-button" type="button" disabled>
+              Reserve seats
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

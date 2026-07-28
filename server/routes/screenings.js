@@ -61,3 +61,33 @@ screeningsRouter.get("/:movieId", (request, response) => {
 
   response.json(screenings);
 });
+
+screeningsRouter.get("/screening/:screeningId", (request, response) => {
+  const { screeningId } = request.params;
+
+  const screening = db
+    .prepare(
+      `
+      SELECT
+        screenings.id,
+        screenings.movie_id,
+        screenings.room_id,
+        screenings.screening_date,
+        screenings.screening_time,
+        rooms.row_count,
+        rooms.seats_per_row,
+        movies.title AS movie_title
+      FROM screenings
+      JOIN movies ON movies.id = screenings.movie_id
+      JOIN rooms ON rooms.id = screenings.room_id
+      WHERE screenings.id = ?
+      `,
+    )
+    .get(screeningId);
+
+  if (!screening) {
+    return response.status(404).json({ error: "Screening not found." });
+  }
+
+  response.json(screening);
+});

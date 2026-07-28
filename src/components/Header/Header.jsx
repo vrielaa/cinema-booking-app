@@ -7,7 +7,7 @@ export default function Header() {
       <header className="header">
         <nav className="header-nav">
           <Link className="logo-link" to="/">
-            <div className="logo logo-top"></div>
+            <div className="logo"></div>
             <h1 className="logo-text">Cinema Booking App</h1>
             <div className="logo logo-bottom"></div>
           </Link>

@@ -1,0 +1,95 @@
+.screenings-table {
+  width: 100%;
+  min-width: 66rem;
+
+  border-collapse: collapse;
+  border: 0.1rem solid rgba(190, 145, 64, 0.5);
+}
+
+.screenings-table-header-cell,
+.screenings-table-cell {
+  padding: 1rem 1.4rem;
+
+  border-bottom: 0.1rem solid rgba(190, 145, 64, 0.25);
+  color: rgb(232, 216, 181);
+  font-size: 1.8rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.screenings-table-header-cell {
+  color: rgb(251, 229, 182);
+  font-weight: 700;
+}
+
+.screenings-table-body .screenings-table-row:last-child .screenings-table-cell {
+  border-bottom: 0;
+}
+
+.screenings-table-body .screenings-table-row:hover {
+  background-color: rgba(251, 229, 182, 0.06);
+}
+
+.screening-select-button {
+  display: inline-block;
+
+  min-width: 9rem;
+  padding: 0.8rem 1.4rem;
+
+  border: 0.1rem solid rgba(190, 145, 64, 0.65);
+  border-radius: 0.4rem;
+  background-color: rgb(22, 102, 105);
+  box-shadow: inset 0 0 0 0.1rem rgba(251, 229, 182, 0.12);
+  color: rgb(251, 229, 182);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.screening-select-button:hover,
+.screening-select-button:focus-visible {
+  background-color: rgb(28, 126, 129);
+}
+
+.screenings-loading {
+  color: rgb(251, 229, 182);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+  text-justify: center;
+}
+.screenings-info {
+  grid-area: screenings;
+
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.screenings-title {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+
+  margin-bottom: 1.8rem;
+
+  color: rgb(232, 216, 181);
+  font-size: 2.2rem;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.screenings-title::before,
+.screenings-title::after {
+  content: "";
+
+  flex: 1;
+
+  height: 0.1rem;
+
+  background-color: rgba(190, 145, 64, 0.5);
+}

@@ -1,0 +1,37 @@
+import "./booking_movie_card.scss";
+
+export default function BookingMovieCard({
+  src,
+  title,
+  genre,
+  date,
+  time,
+  roomId,
+}) {
+  return (
+    <aside className="booking-movie-card">
+      <img className="booking-poster" src={src} alt={title} />
+
+      <div className="booking-movie-info">
+        <p className="booking-movie-label">Now booking</p>
+        <h2 className="booking-movie-title">{title}</h2>
+        <p className="booking-movie-genre">{genre}</p>
+
+        <div className="booking-details">
+          <div className="booking-detail">
+            <span className="booking-detail-label">Date</span>
+            <span className="booking-detail-value">{date}</span>
+          </div>
+          <div className="booking-detail">
+            <span className="booking-detail-label">Time</span>
+            <span className="booking-detail-value">{time}</span>
+          </div>
+          <div className="booking-detail">
+            <span className="booking-detail-label">Room</span>
+            <span className="booking-detail-value">Room {roomId}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}

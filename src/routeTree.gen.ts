@@ -18,6 +18,7 @@ import { Route as rootRoute } from './routes/__root'
 
 const MoviesLazyImport = createFileRoute('/movies')()
 const IndexLazyImport = createFileRoute('/')()
+const BookingScreeningIdLazyImport = createFileRoute('/booking/$screeningId')()
 
 // Create/Update Routes
 
@@ -30,6 +31,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const BookingScreeningIdLazyRoute = BookingScreeningIdLazyImport.update({
+  path: '/booking/$screeningId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/booking.$screeningId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -49,6 +57,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesLazyImport
       parentRoute: typeof rootRoute
     }
+    '/booking/$screeningId': {
+      id: '/booking/$screeningId'
+      path: '/booking/$screeningId'
+      fullPath: '/booking/$screeningId'
+      preLoaderRoute: typeof BookingScreeningIdLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -57,36 +72,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/movies': typeof MoviesLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/movies': typeof MoviesLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/movies': typeof MoviesLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies'
+  fullPaths: '/' | '/movies' | '/booking/$screeningId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies'
-  id: '__root__' | '/' | '/movies'
+  to: '/' | '/movies' | '/booking/$screeningId'
+  id: '__root__' | '/' | '/movies' | '/booking/$screeningId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   MoviesLazyRoute: typeof MoviesLazyRoute
+  BookingScreeningIdLazyRoute: typeof BookingScreeningIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   MoviesLazyRoute: MoviesLazyRoute,
+  BookingScreeningIdLazyRoute: BookingScreeningIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +122,8 @@ export const routeTree = rootRoute
       "filePath": "__root.jsx",
       "children": [
         "/",
-        "/movies"
+        "/movies",
+        "/booking/$screeningId"
       ]
     },
     "/": {
@@ -110,6 +131,9 @@ export const routeTree = rootRoute
     },
     "/movies": {
       "filePath": "movies.lazy.jsx"
+    },
+    "/booking/$screeningId": {
+      "filePath": "booking.$screeningId.lazy.jsx"
     }
   }
 }

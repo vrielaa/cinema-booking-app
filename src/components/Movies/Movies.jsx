@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
 import "./movies.scss";
 import Modal from "../ScreeningsModal/ScreeningsModal";
+import {
+  fetchMovies,
+  fetchScreeningsForMovie,
+} from "../../utils/fetchFunctions";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -10,46 +14,12 @@ function Movies() {
   const [moviesLoading, setMoviesLoading] = useState(true);
   const [screeningsLoading, setScreeningsLoading] = useState(false);
 
-  async function fetchMovies() {
-    setMoviesLoading(true);
-
-    try {
-      const response = await fetch("/api/movies");
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      setMovies(data);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
-    } finally {
-      setMoviesLoading(false);
-    }
-  }
-
-  async function fetchScreeningsForMovie(movieId) {
-    setScreeningsLoading(true);
-
-    try {
-      const response = await fetch(`/api/screenings/${movieId}`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      setScreenings(data);
-    } catch (error) {
-      console.error("Error fetching screenings:", error);
-    } finally {
-      setScreeningsLoading(false);
-    }
-  }
-
   function openScreeningsModal(movieId) {
     const movie = movies.find((m) => m.id === movieId);
     setFocusedMovie(movie);
     setScreenings([]);
     setScreeningsLoading(true);
-    fetchScreeningsForMovie(movieId);
+    fetchScreeningsForMovie(movieId, setScreenings, setScreeningsLoading);
   }
 
   function closeScreeningsModal() {
@@ -59,7 +29,7 @@ function Movies() {
   }
 
   useEffect(() => {
-    fetchMovies();
+    fetchMovies(setMovies, setMoviesLoading);
   }, []);
 
   return (
