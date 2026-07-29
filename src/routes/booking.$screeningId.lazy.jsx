@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import Booking from "../components/Booking/Booking";
+import Booking from "../components/Booking/Booking/Booking";
 
 export const Route = createLazyFileRoute("/booking/$screeningId")({
   component: BookingPage,

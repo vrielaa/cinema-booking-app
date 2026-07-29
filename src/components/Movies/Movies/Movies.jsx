@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
 import "./movies.scss";
-import Modal from "../ScreeningsModal/ScreeningsModal";
+import Modal from "../../Screenings/ScreeningsModal/ScreeningsModal";
 import {
   fetchMovies,
   fetchScreeningsForMovie,
-} from "../../utils/fetchFunctions";
+} from "../../../utils/fetchFunctions";
 
 function Movies() {
   const [movies, setMovies] = useState([]);

@@ -103,7 +103,7 @@
   background-color: rgba(251, 229, 182, 0.06);
 }
 
-.booking-legend-occupied {
+.booking-legend-taken {
   border-color: rgba(109, 93, 76, 0.5);
   background-color: rgb(46, 43, 38);
 }
@@ -160,11 +160,21 @@
   border: 0.1rem solid rgba(190, 145, 64, 0.45);
   border-radius: 0.4rem;
   background-color: rgb(22, 102, 105);
-  color: rgba(251, 229, 182, 0.55);
+  color: rgb(251, 229, 182);
   font: inherit;
   font-size: 1.4rem;
   font-weight: 700;
+}
+
+.booking-confirm-button:hover {
+  cursor: pointer;
+  background-color: rgb(53, 156, 200);
+}
+
+.booking-confirm-button:disabled {
   cursor: not-allowed;
+  background-color: rgb(22, 102, 105);
+  opacity: 0.5;
 }
 
 @media (max-width: 900px) {

@@ -1,0 +1,26 @@
+.booking-seat-map {
+  display: grid;
+  gap: 1rem;
+
+  min-width: 52rem;
+}
+
+.booking-seat-row {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr 2.4rem;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.booking-row-label {
+  color: rgba(251, 229, 182, 0.48);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.booking-row-seats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

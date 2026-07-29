@@ -7,7 +7,7 @@ import {
   fetchMovie,
   fetchRoom,
   fetchScreeningRoomMovie,
-} from "../../utils/fetchFunctions";
+} from "../../../utils/fetchFunctions";
 
 export default function Booking({ screeningId }) {
   const screeningFromState = useLocation({
@@ -27,6 +27,7 @@ export default function Booking({ screeningId }) {
   const [selectedSeats, setSelectedSeats] = useState({});
   const [takenSeats, setTakenSeats] = useState({});
   const seatPrice = 10; // Assuming each seat costs $10
+  const isAnySeatSelected = Object.keys(selectedSeats).length > 0;
   const cost = Object.keys(selectedSeats).length * seatPrice;
 
   useEffect(() => {
@@ -101,8 +102,8 @@ export default function Booking({ screeningId }) {
               <span className="booking-legend-label">Available</span>
             </div>
             <div className="booking-legend-item">
-              <span className="booking-legend-seat booking-legend-occupied"></span>
-              <span className="booking-legend-label">Occupied</span>
+              <span className="booking-legend-seat booking-legend-taken"></span>
+              <span className="booking-legend-label">Taken</span>
             </div>
             <div className="booking-legend-item">
               <span className="booking-legend-seat booking-legend-selected"></span>
@@ -114,14 +115,20 @@ export default function Booking({ screeningId }) {
             <div className="booking-summary-copy">
               <span className="booking-summary-label">Your seats</span>
               <strong className="booking-summary-value">
-                No seats selected
+                {isAnySeatSelected
+                  ? Object.keys(selectedSeats).join(", ")
+                  : "None selected"}
               </strong>
             </div>
             <div className="booking-summary-total">
               <span className="booking-summary-label">Total</span>
               <strong className="booking-price">${cost.toFixed(2)}</strong>
             </div>
-            <button className="booking-confirm-button" type="button" disabled>
+            <button
+              className="booking-confirm-button"
+              type="button"
+              disabled={!isAnySeatSelected}
+            >
               Reserve seats
             </button>
           </div>

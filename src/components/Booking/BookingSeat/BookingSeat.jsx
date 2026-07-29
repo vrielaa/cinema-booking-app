@@ -8,10 +8,15 @@ export default function BookingSeat({
   takenSeats,
 }) {
   const seatId = `${rowLabel}${seatNumber}`;
-  let isSelected = Boolean(selectedSeats[seatId]);
-  let isTaken = Boolean(takenSeats[seatId]);
+  const isSelected = Boolean(selectedSeats[seatId]);
+  const isTaken = Boolean(takenSeats[seatId]);
+  const seatStatus = isTaken ? "taken" : isSelected ? "selected" : "available";
 
   const toggleSeatSelection = () => {
+    if (isTaken) {
+      return;
+    }
+
     setSelectedSeats((prevSelectedSeats) => {
       const newSelectedSeats = { ...prevSelectedSeats };
       if (newSelectedSeats[seatId]) {
@@ -26,8 +31,11 @@ export default function BookingSeat({
 
   return (
     <button
-      className={`booking-seat ${isSelected ? "booking-seat-selected" : "booking-seat-available"} ${isTaken ? "booking-seat-taken" : ""}`}
-      aria-label={`${rowLabel}${seatNumber}, ${isSelected ? "selected" : "available"}`}
+      className={`booking-seat booking-seat-${seatStatus}`}
+      type="button"
+      aria-label={`${seatId}, ${seatStatus}`}
+      aria-pressed={isSelected}
+      disabled={isTaken}
       onClick={toggleSeatSelection}
     >
       {seatNumber}
