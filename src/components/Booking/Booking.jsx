@@ -15,14 +15,19 @@ export default function Booking({ screeningId }) {
   });
 
   const [screening, setScreening] = useState(screeningFromState ?? null);
-  const [, setScreeningLoading] = useState(!screeningFromState);
+  const [screeningLoading, setScreeningLoading] = useState(!screeningFromState);
 
   const [movie, setMovie] = useState(undefined);
-  const [, setMovieLoading] = useState(true);
+  const [movieLoading, setMovieLoading] = useState(true);
 
   const [rowLabels, setRowLabels] = useState(undefined);
   const [seatNumbers, setSeatNumbers] = useState(undefined);
-  const [, setRoomLoading] = useState(true);
+  const [roomLoading, setRoomLoading] = useState(true);
+
+  const [selectedSeats, setSelectedSeats] = useState({});
+  const [takenSeats, setTakenSeats] = useState({});
+  const seatPrice = 10; // Assuming each seat costs $10
+  const cost = Object.keys(selectedSeats).length * seatPrice;
 
   useEffect(() => {
     const stateMatchesUrl =
@@ -82,7 +87,13 @@ export default function Booking({ screeningId }) {
             <p className="booking-screen-label">Screen</p>
           </div>
 
-          <BookingSeatMap rowLabels={rowLabels} seatNumbers={seatNumbers} />
+          <BookingSeatMap
+            rowLabels={rowLabels}
+            seatNumbers={seatNumbers}
+            setSelectedSeats={setSelectedSeats}
+            selectedSeats={selectedSeats}
+            takenSeats={takenSeats}
+          />
 
           <div className="booking-legend">
             <div className="booking-legend-item">
@@ -108,7 +119,7 @@ export default function Booking({ screeningId }) {
             </div>
             <div className="booking-summary-total">
               <span className="booking-summary-label">Total</span>
-              <strong className="booking-price">$0.00</strong>
+              <strong className="booking-price">${cost.toFixed(2)}</strong>
             </div>
             <button className="booking-confirm-button" type="button" disabled>
               Reserve seats

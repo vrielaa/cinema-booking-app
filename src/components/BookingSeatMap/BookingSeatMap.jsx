@@ -1,6 +1,13 @@
 import "./booking_seat_map.scss";
+import BookingSeat from "../BookingSeat/BookingSeat";
 
-export default function BookingSeatMap({ rowLabels, seatNumbers }) {
+export default function BookingSeatMap({
+  rowLabels,
+  seatNumbers,
+  setSelectedSeats,
+  selectedSeats,
+  takenSeats,
+}) {
   return (
     <div className="booking-seat-map">
       {rowLabels?.map((rowLabel) => (
@@ -9,13 +16,14 @@ export default function BookingSeatMap({ rowLabels, seatNumbers }) {
 
           <div className="booking-row-seats">
             {seatNumbers?.map((seatNumber) => (
-              <span
-                className="booking-seat booking-seat-available"
+              <BookingSeat
                 key={`${rowLabel}-${seatNumber}`}
-                aria-label={`${rowLabel}${seatNumber}, available`}
-              >
-                {seatNumber}
-              </span>
+                rowLabel={rowLabel}
+                seatNumber={seatNumber}
+                selectedSeats={selectedSeats}
+                setSelectedSeats={setSelectedSeats}
+                takenSeats={takenSeats}
+              />
             ))}
           </div>
 
