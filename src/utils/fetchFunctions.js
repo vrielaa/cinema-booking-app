@@ -34,6 +34,49 @@ export async function fetchMovie(movieId, setMovie, setMovieLoading) {
   }
 }
 
+export async function searchMovies(
+  title,
+  genre,
+  minDuration,
+  maxDuration,
+  setMovies,
+  setMoviesLoading,
+) {
+  setMoviesLoading(true);
+
+  try {
+    const response = await fetch(
+      `/api/movies/search?title=${encodeURIComponent(title)}&genre=${encodeURIComponent(genre)}&minDuration=${encodeURIComponent(minDuration)}&maxDuration=${encodeURIComponent(maxDuration)}`,
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setMovies(data);
+  } catch (error) {
+    console.error("Error searching movies:", error);
+  } finally {
+    setMoviesLoading(false);
+  }
+}
+
+export async function fetchGenres(setGenres, setGenresLoading) {
+  setGenresLoading(true);
+
+  try {
+    const response = await fetch("/api/movies/genres");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setGenres(data);
+  } catch (error) {
+    console.error("Error fetching genres:", error);
+  } finally {
+    setGenresLoading(false);
+  }
+}
+
 //* Screening requests
 
 export async function fetchScreeningsForMovie(

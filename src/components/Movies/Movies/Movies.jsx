@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
+import MovieFilters from "../MovieFilters/MovieFilters";
 import "./movies.scss";
 import Modal from "../../Screenings/ScreeningsModal/ScreeningsModal";
-import {
-  fetchMovies,
-  fetchScreeningsForMovie,
-} from "../../../utils/fetchFunctions";
+import { fetchScreeningsForMovie } from "../../../utils/fetchFunctions";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -28,12 +26,10 @@ function Movies() {
     setScreeningsLoading(false);
   }
 
-  useEffect(() => {
-    fetchMovies(setMovies, setMoviesLoading);
-  }, []);
-
   return (
     <div className="movies-container">
+      <MovieFilters setMovies={setMovies} setMoviesLoading={setMoviesLoading} />
+
       {moviesLoading ? (
         <p className="movies-loading">Loading movies...</p>
       ) : (
