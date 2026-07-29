@@ -1,95 +1,26 @@
 import "./booking.scss";
-import { useLocation } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
 import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
 import BookingMovieCard from "../BookingMovieCard/BookingMovieCard";
 import BookingLegend from "../BookingLegend/BookingLegend";
 import BookingHeading from "../BookingHeading/BookingHeading";
 import BookingSummary from "../BookingSummary/BookingSummary";
-import {
-  fetchMovie,
-  fetchRoom,
-  fetchScreeningFromScreeningId,
-  fetchTakenSeats,
-} from "../../../utils/fetchFunctions";
+import useBooking from "../../../hooks/useBooking";
 
 export default function Booking({ screeningId }) {
-  const screeningFromState = useLocation({
-    select: (location) => location.state?.screening,
-  });
-
-  const [screening, setScreening] = useState(screeningFromState ?? null);
-  const [screeningLoading, setScreeningLoading] = useState(!screeningFromState);
-
-  const [movie, setMovie] = useState(undefined);
-  const [movieLoading, setMovieLoading] = useState(true);
-
-  const [rowLabels, setRowLabels] = useState(undefined);
-  const [seatNumbers, setSeatNumbers] = useState(undefined);
-  const [roomLoading, setRoomLoading] = useState(true);
-
-  const [selectedSeats, setSelectedSeats] = useState({});
-  const [takenSeats, setTakenSeats] = useState({});
-  const [takenSeatsLoading, setTakenSeatsLoading] = useState(true);
-  const seatPrice = 10; // Assuming each seat costs $10
-  const isAnySeatSelected = Object.keys(selectedSeats).length > 0;
-  const cost = Object.keys(selectedSeats).length * seatPrice;
-  const bookingLoading =
-    screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
-  const [bookingError, setBookingError] = useState("");
-
-  useEffect(() => {
-    async function loadBooking() {
-      setBookingError("");
-      setScreeningLoading(true);
-      setRoomLoading(true);
-      setMovieLoading(true);
-      setTakenSeatsLoading(true);
-
-      try {
-        const stateMatchesUrl =
-          screeningFromState &&
-          String(screeningFromState.id) === String(screeningId);
-
-        let screeningData;
-
-        if (stateMatchesUrl) {
-          screeningData = screeningFromState;
-          setScreening(screeningData);
-          setScreeningLoading(false);
-        } else {
-          screeningData = await fetchScreeningFromScreeningId(
-            screeningId,
-            setScreening,
-            setScreeningLoading,
-          );
-        }
-
-        await Promise.all([
-          fetchRoom(
-            screeningData.room_id,
-            setRowLabels,
-            setSeatNumbers,
-            setRoomLoading,
-          ),
-          fetchMovie(screeningData.movie_id, setMovie, setMovieLoading),
-          fetchTakenSeats(
-            screeningData.id,
-            setTakenSeats,
-            setTakenSeatsLoading,
-          ),
-        ]);
-      } catch (error) {
-        setScreeningLoading(false);
-        setRoomLoading(false);
-        setMovieLoading(false);
-        setTakenSeatsLoading(false);
-        setBookingError(error.message);
-      }
-    }
-
-    loadBooking();
-  }, [screeningId, screeningFromState]);
+  const {
+    bookingError,
+    bookingLoading,
+    cost,
+    isAnySeatSelected,
+    movie,
+    rowLabels,
+    screening,
+    seatNumbers,
+    selectedSeats,
+    setSelectedSeats,
+    setTakenSeats,
+    takenSeats,
+  } = useBooking(screeningId);
 
   if (bookingLoading) {
     return (
