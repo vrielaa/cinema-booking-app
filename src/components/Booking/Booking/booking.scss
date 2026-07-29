@@ -62,34 +62,6 @@
   color: rgb(251, 229, 182);
 }
 
-.booking-heading {
-  margin-bottom: 3.2rem;
-  text-align: center;
-}
-
-.booking-eyebrow {
-  margin-bottom: 0.8rem;
-
-  color: rgb(190, 145, 64);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 0.25rem;
-  text-transform: uppercase;
-}
-
-.booking-title {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 5vw, 4.8rem);
-  line-height: 1.1;
-}
-
-.booking-intro {
-  margin-top: 1.2rem;
-
-  color: rgba(251, 229, 182, 0.72);
-  font-size: 1.7rem;
-}
-
 .booking-layout {
   display: grid;
   grid-template-columns: 28rem minmax(0, 1fr);
@@ -131,109 +103,6 @@
   text-transform: uppercase;
 }
 
-.booking-legend {
-  display: flex;
-  justify-content: center;
-  gap: 2.4rem;
-
-  margin-top: 3.2rem;
-  padding-top: 2.2rem;
-
-  border-top: 0.1rem solid rgba(190, 145, 64, 0.25);
-}
-
-.booking-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.booking-legend-seat {
-  width: 1.8rem;
-  height: 1.6rem;
-
-  border: 0.1rem solid rgba(190, 145, 64, 0.72);
-  border-radius: 0.4rem 0.4rem 0.2rem 0.2rem;
-}
-
-.booking-legend-available {
-  background-color: rgba(251, 229, 182, 0.06);
-}
-
-.booking-legend-taken {
-  border-color: rgba(109, 93, 76, 0.5);
-  background-color: rgb(46, 43, 38);
-}
-
-.booking-legend-selected {
-  border-color: rgb(22, 102, 105);
-  background-color: rgb(22, 102, 105);
-}
-
-.booking-legend-label {
-  color: rgba(251, 229, 182, 0.68);
-  font-size: 1.2rem;
-}
-
-.booking-summary {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 2.4rem;
-
-  margin-top: 3.2rem;
-  padding: 2rem;
-
-  border: 0.1rem solid rgba(190, 145, 64, 0.35);
-  background-color: rgb(12, 12, 11);
-}
-
-.booking-summary-copy,
-.booking-summary-total {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.booking-summary-value {
-  color: rgb(232, 216, 181);
-  font-size: 1.5rem;
-}
-
-.booking-summary-label {
-  color: rgba(251, 229, 182, 0.58);
-  font-size: 1.2rem;
-  text-transform: uppercase;
-}
-
-.booking-price {
-  color: rgb(251, 229, 182);
-  font-size: 2rem;
-}
-
-.booking-confirm-button {
-  padding: 1.2rem 1.8rem;
-
-  border: 0.1rem solid rgba(190, 145, 64, 0.45);
-  border-radius: 0.4rem;
-  background-color: rgb(22, 102, 105);
-  color: rgb(251, 229, 182);
-  font: inherit;
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.booking-confirm-button:hover {
-  cursor: pointer;
-  background-color: rgb(53, 156, 200);
-}
-
-.booking-confirm-button:disabled {
-  cursor: not-allowed;
-  background-color: rgb(22, 102, 105);
-  opacity: 0.5;
-}
-
 @media (max-width: 900px) {
   .booking-layout {
     grid-template-columns: 1fr;
@@ -249,18 +118,5 @@
   .booking-seats-card {
     padding: 1.8rem;
     overflow-x: auto;
-  }
-
-  .booking-legend,
-  .booking-summary {
-    min-width: 52rem;
-  }
-
-  .booking-summary {
-    grid-template-columns: 1fr auto;
-  }
-
-  .booking-confirm-button {
-    grid-column: 1 / -1;
   }
 }
