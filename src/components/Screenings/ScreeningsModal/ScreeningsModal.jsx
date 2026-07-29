@@ -23,14 +23,22 @@ const Modal = ({
   useEffect(() => {
     const modalRoot = document.getElementById("modal");
     modalRoot.appendChild(modalRef.current);
+    document.body.classList.add("modal-open");
 
     return () => {
       modalRoot.removeChild(modalRef.current);
+      document.body.classList.remove("modal-open");
     };
   }, []);
 
+  function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      close();
+    }
+  }
+
   return createPortal(
-    <div className="screenings-modal-overlay">
+    <div className="screenings-modal-overlay" onClick={handleOverlayClick}>
       <div className="screenings-modal">
         <button
           className="screenings-modal-close-button"

@@ -25,14 +25,22 @@ const Modal = ({
   useEffect(() => {
     const modalRoot = document.getElementById("modal");
     modalRoot.appendChild(modalRef.current);
+    document.body.classList.add("modal-open");
 
     return () => {
       modalRoot.removeChild(modalRef.current);
+      document.body.classList.remove("modal-open");
     };
   }, []);
 
+  function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      close();
+    }
+  }
+
   return createPortal(
-    <div className="booking-reserve-overlay">
+    <div className="booking-reserve-overlay" onClick={handleOverlayClick}>
       <div className="booking-reserve-modal">
         <button
           className="booking-reserve-close-button"
