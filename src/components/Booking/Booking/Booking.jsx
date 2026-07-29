@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
 import BookingMovieCard from "../BookingMovieCard/BookingMovieCard";
+import BookingReserveModal from "../BookingReserveModal/BookingReserveModal";
 import {
   fetchMovie,
   fetchRoom,
@@ -29,6 +30,8 @@ export default function Booking({ screeningId }) {
   const seatPrice = 10; // Assuming each seat costs $10
   const isAnySeatSelected = Object.keys(selectedSeats).length > 0;
   const cost = Object.keys(selectedSeats).length * seatPrice;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const stateMatchesUrl =
@@ -128,9 +131,24 @@ export default function Booking({ screeningId }) {
               className="booking-confirm-button"
               type="button"
               disabled={!isAnySeatSelected}
+              onClick={() => setIsModalOpen(true)}
             >
               Reserve seats
             </button>
+
+            {isModalOpen ? (
+              <BookingReserveModal
+                screeningId={screeningId}
+                title={movie?.title}
+                date={screening?.screening_date}
+                time={screening?.screening_time}
+                roomId={screening?.room_id}
+                selectedSeats={selectedSeats}
+                setSelectedSeats={setSelectedSeats}
+                setTakenSeats={setTakenSeats}
+                close={() => setIsModalOpen(false)}
+              />
+            ) : null}
           </div>
         </div>
       </div>

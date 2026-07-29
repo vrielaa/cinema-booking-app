@@ -154,3 +154,45 @@ export async function fetchScreeningsForMovie(
     setScreeningsLoading(false);
   }
 }
+
+export async function confirmReservation(
+  screeningId,
+  customerName,
+  selectedSeats,
+  setSelectedSeats,
+  close,
+  setTakenSeats,
+) {
+  try {
+    const response = await fetch("/api/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        screeningId,
+        customerName,
+        seats: selectedSeats,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    console.log("Booking successful:", data);
+
+    // Update the taken seats state
+    setTakenSeats((prevTakenSeats) => ({
+      ...prevTakenSeats,
+      ...selectedSeats,
+    }));
+
+    // Clear the selected seats after booking
+    setSelectedSeats({});
+    close();
+  } catch (error) {
+    console.error("Error booking seats:", error);
+  }
+}
