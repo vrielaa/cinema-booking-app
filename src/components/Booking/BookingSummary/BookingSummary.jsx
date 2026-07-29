@@ -6,12 +6,10 @@ export default function BookingSummary({
   isAnySeatSelected,
   selectedSeats,
   cost,
-  takenSeatsLoading,
   movie,
   screening,
   setSelectedSeats,
   setTakenSeats,
-  setTakenSeatsLoading,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -32,7 +30,7 @@ export default function BookingSummary({
       <button
         className="booking-confirm-button"
         type="button"
-        disabled={!isAnySeatSelected || takenSeatsLoading}
+        disabled={!isAnySeatSelected}
         onClick={() => setIsModalOpen(true)}
       >
         Reserve seats
@@ -49,7 +47,6 @@ export default function BookingSummary({
           setSelectedSeats={setSelectedSeats}
           setTakenSeats={setTakenSeats}
           close={() => setIsModalOpen(false)}
-          setTakenSeatsLoading={setTakenSeatsLoading}
         />
       ) : null}
     </div>

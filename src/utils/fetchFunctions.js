@@ -152,7 +152,6 @@ export async function confirmReservation(
   close,
   setTakenSeats,
   setReservationLoading,
-  setTakenSeatsLoading,
   setReservationError,
 ) {
   setReservationLoading(true);
@@ -174,7 +173,7 @@ export async function confirmReservation(
     if (response.status === 409) {
       const errorData = await response.json();
 
-      await fetchTakenSeats(screeningId, setTakenSeats, setTakenSeatsLoading);
+      await fetchTakenSeats(screeningId, setTakenSeats, setReservationLoading);
       setSelectedSeats({});
       setReservationError(errorData.error);
 

@@ -141,12 +141,10 @@ export default function Booking({ screeningId }) {
             isAnySeatSelected={isAnySeatSelected}
             selectedSeats={selectedSeats}
             cost={cost}
-            takenSeatsLoading={takenSeatsLoading}
             movie={movie}
             screening={screening}
             setSelectedSeats={setSelectedSeats}
             setTakenSeats={setTakenSeats}
-            setTakenSeatsLoading={setTakenSeatsLoading}
           />
         </div>
       </div>

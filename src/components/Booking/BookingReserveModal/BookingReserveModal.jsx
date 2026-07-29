@@ -12,7 +12,6 @@ const Modal = ({
   setSelectedSeats,
   setTakenSeats,
   close,
-  setTakenSeatsLoading,
 }) => {
   const [customerName, setCustomerName] = useState("");
   const [reservationLoading, setReservationLoading] = useState(false);
@@ -97,7 +96,6 @@ const Modal = ({
                 close,
                 setTakenSeats,
                 setReservationLoading,
-                setTakenSeatsLoading,
                 setReservationError,
               );
             }}
