@@ -86,7 +86,6 @@ export async function fetchScreeningRoomMovieTakenSeats(
 
   try {
     let roomResponse = null;
-    let takenSeatsResponse = null;
 
     const screeningResponse = await fetchScreeningFromScreeningId(
       screeningId,
@@ -102,11 +101,7 @@ export async function fetchScreeningRoomMovieTakenSeats(
         setRoomLoading,
       );
 
-      takenSeatsResponse = await fetchTakenSeats(
-        screeningId,
-        setTakenSeats,
-        setTakenSeatsLoading,
-      );
+      await fetchTakenSeats(screeningId, setTakenSeats, setTakenSeatsLoading);
     }
 
     if (screeningResponse && roomResponse) {
@@ -173,7 +168,9 @@ export async function confirmReservation(
   setSelectedSeats,
   close,
   setTakenSeats,
+  setReservationLoading,
 ) {
+  setReservationLoading(true);
   try {
     const response = await fetch("/api/bookings", {
       method: "POST",
@@ -192,7 +189,6 @@ export async function confirmReservation(
     }
 
     const data = await response.json();
-    console.log("Booking successful:", data);
 
     // Update the taken seats state
     setTakenSeats((prevTakenSeats) => ({
@@ -205,6 +201,8 @@ export async function confirmReservation(
     close();
   } catch (error) {
     console.error("Error booking seats:", error);
+  } finally {
+    setReservationLoading(false);
   }
 }
 

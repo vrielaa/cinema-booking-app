@@ -14,6 +14,7 @@ const Modal = ({
   close,
 }) => {
   const [customerName, setCustomerName] = useState("");
+  const [reservationLoading, setReservationLoading] = useState(false);
   const modalRef = useRef(null);
 
   if (!modalRef.current) {
@@ -75,7 +76,9 @@ const Modal = ({
           <button
             className="booking-reserve-confirm-button"
             type="submit"
+            disabled={!customerName.trim() || reservationLoading}
             onClick={() => {
+              setReservationLoading(true);
               confirmReservation(
                 screeningId,
                 customerName,
@@ -83,10 +86,11 @@ const Modal = ({
                 setSelectedSeats,
                 close,
                 setTakenSeats,
+                setReservationLoading,
               );
             }}
           >
-            Confirm Reservation
+            {reservationLoading ? "Reserving..." : "Confirm Reservation"}
           </button>
         </div>
       </div>

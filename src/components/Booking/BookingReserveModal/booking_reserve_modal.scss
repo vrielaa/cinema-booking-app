@@ -121,6 +121,11 @@
   font-weight: 700;
 }
 
+.booking-reserve-confirm-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .booking-reserve-confirm-button:hover,
 .booking-reserve-confirm-button:focus-visible {
   background-color: rgb(53, 156, 200);

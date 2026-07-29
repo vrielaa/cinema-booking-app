@@ -35,6 +35,8 @@ export default function Booking({ screeningId }) {
   const bookingLoading =
     screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
 
+  const [reservationLoading, setReservationLoading] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {

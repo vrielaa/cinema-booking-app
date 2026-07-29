@@ -13,6 +13,7 @@ bookingsRouter.post("/", (request, response) => {
 
   const takenSeats = existingBookings.reduce((acc, booking) => {
     const bookedSeats = JSON.parse(booking.seats);
+
     return { ...acc, ...bookedSeats };
   }, {});
 
