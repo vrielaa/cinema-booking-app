@@ -12,9 +12,11 @@ const Modal = ({
   setSelectedSeats,
   setTakenSeats,
   close,
+  setTakenSeatsLoading,
 }) => {
   const [customerName, setCustomerName] = useState("");
   const [reservationLoading, setReservationLoading] = useState(false);
+  const [reservationError, setReservationError] = useState("");
   const modalRef = useRef(null);
 
   if (!modalRef.current) {
@@ -65,6 +67,11 @@ const Modal = ({
         </p>
 
         <div className="booking-reserve-actions">
+          {reservationError ? (
+            <p className="booking-reserve-error" role="alert">
+              {reservationError}
+            </p>
+          ) : null}
           <input
             className="booking-reserve-name-input"
             type="text"
@@ -76,9 +83,12 @@ const Modal = ({
           <button
             className="booking-reserve-confirm-button"
             type="submit"
-            disabled={!customerName.trim() || reservationLoading}
+            disabled={
+              !customerName.trim() ||
+              reservationLoading ||
+              Object.keys(selectedSeats).length === 0
+            }
             onClick={() => {
-              setReservationLoading(true);
               confirmReservation(
                 screeningId,
                 customerName,
@@ -87,6 +97,8 @@ const Modal = ({
                 close,
                 setTakenSeats,
                 setReservationLoading,
+                setTakenSeatsLoading,
+                setReservationError,
               );
             }}
           >

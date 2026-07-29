@@ -1,127 +1,4 @@
-export async function fetchRoom(
-  roomId,
-  setRowLabels,
-  setSeatNumbers,
-  setRoomLoading,
-) {
-  setRoomLoading(true);
-  try {
-    const response = await fetch(`/api/rooms/${roomId}`);
-    const data = await response.json();
-
-    const rowLabels = Array.from({ length: data.row_count }, (_, index) =>
-      String.fromCharCode(65 + index),
-    );
-
-    const seatNumbers = Array.from(
-      { length: data.seats_per_row },
-      (_, index) => index + 1,
-    );
-
-    setRowLabels(rowLabels);
-    setSeatNumbers(seatNumbers);
-
-    return data; // Return the fetched room data for further use
-  } catch (error) {
-    console.error("Error fetching room info:", error);
-  } finally {
-    setRoomLoading(false);
-  }
-}
-
-export async function fetchMovie(movieId, setMovie, setMovieLoading) {
-  setMovieLoading(true);
-  try {
-    const response = await fetch(`/api/movies/${movieId}`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    setMovie(data);
-  } catch (error) {
-    console.error("Error fetching movie:", error);
-  } finally {
-    setMovieLoading(false);
-  }
-}
-
-export async function fetchScreeningFromScreeningId(
-  screeningId,
-  setScreening,
-  setScreeningLoading,
-) {
-  setScreeningLoading(true);
-  try {
-    const response = await fetch(`/api/screenings/screening/${screeningId}`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    setScreening(data);
-
-    return data; // Return the fetched screening data for further use
-  } catch (error) {
-    console.error("Error fetching screening:", error);
-  } finally {
-    setScreeningLoading(false);
-  }
-}
-
-export async function fetchScreeningRoomMovieTakenSeats(
-  screeningId,
-  setScreening,
-  setScreeningLoading,
-  setRowLabels,
-  setSeatNumbers,
-  setRoomLoading,
-  setMovie,
-  setMovieLoading,
-  setTakenSeats,
-  setTakenSeatsLoading,
-) {
-  setScreeningLoading(true);
-  setRoomLoading(true);
-  setMovieLoading(true);
-  setTakenSeatsLoading(true);
-
-  try {
-    let roomResponse = null;
-
-    const screeningResponse = await fetchScreeningFromScreeningId(
-      screeningId,
-      setScreening,
-      setScreeningLoading,
-    );
-    if (screeningResponse) {
-      const roomId = screeningResponse.room_id;
-      roomResponse = await fetchRoom(
-        roomId,
-        setRowLabels,
-        setSeatNumbers,
-        setRoomLoading,
-      );
-
-      await fetchTakenSeats(screeningId, setTakenSeats, setTakenSeatsLoading);
-    }
-
-    if (screeningResponse && roomResponse) {
-      const movieId = screeningResponse.movie_id;
-      const movieResponse = await fetch(`/api/movies/${movieId}`);
-      if (!movieResponse.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const movieData = await movieResponse.json();
-      setMovie(movieData);
-    }
-  } catch (error) {
-    console.error("Error fetching screening and room:", error);
-  } finally {
-    setScreeningLoading(false);
-    setRoomLoading(false);
-    setMovieLoading(false);
-    setTakenSeatsLoading(false);
-  }
-}
+//* Movie requests
 
 export async function fetchMovies(setMovies, setMoviesLoading) {
   setMoviesLoading(true);
@@ -139,6 +16,25 @@ export async function fetchMovies(setMovies, setMoviesLoading) {
     setMoviesLoading(false);
   }
 }
+
+export async function fetchMovie(movieId, setMovie, setMovieLoading) {
+  setMovieLoading(true);
+  try {
+    const response = await fetch(`/api/movies/${movieId}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setMovie(data);
+  } catch (error) {
+    console.error("Error fetching movie:", error);
+    throw new Error("Failed to load movie.");
+  } finally {
+    setMovieLoading(false);
+  }
+}
+
+//* Screening requests
 
 export async function fetchScreeningsForMovie(
   movieId,
@@ -161,50 +57,68 @@ export async function fetchScreeningsForMovie(
   }
 }
 
-export async function confirmReservation(
+export async function fetchScreeningFromScreeningId(
   screeningId,
-  customerName,
-  selectedSeats,
-  setSelectedSeats,
-  close,
-  setTakenSeats,
-  setReservationLoading,
+  setScreening,
+  setScreeningLoading,
 ) {
-  setReservationLoading(true);
+  setScreeningLoading(true);
   try {
-    const response = await fetch("/api/bookings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        screeningId,
-        customerName,
-        seats: selectedSeats,
-      }),
-    });
-
+    const response = await fetch(`/api/screenings/screening/${screeningId}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setScreening(data);
+
+    return data; // Return the fetched screening data for further use
+  } catch (error) {
+    console.error("Error fetching screening:", error);
+    throw new Error("Failed to load screening.");
+  } finally {
+    setScreeningLoading(false);
+  }
+}
+
+//* Room requests
+
+export async function fetchRoom(
+  roomId,
+  setRowLabels,
+  setSeatNumbers,
+  setRoomLoading,
+) {
+  setRoomLoading(true);
+  try {
+    const response = await fetch(`/api/rooms/${roomId}`);
+    if (!response.ok) {
+      throw new Error("Failed to load room.");
     }
 
     const data = await response.json();
 
-    // Update the taken seats state
-    setTakenSeats((prevTakenSeats) => ({
-      ...prevTakenSeats,
-      ...selectedSeats,
-    }));
+    const rowLabels = Array.from({ length: data.row_count }, (_, index) =>
+      String.fromCharCode(65 + index),
+    );
 
-    // Clear the selected seats after booking
-    setSelectedSeats({});
-    close();
+    const seatNumbers = Array.from(
+      { length: data.seats_per_row },
+      (_, index) => index + 1,
+    );
+
+    setRowLabels(rowLabels);
+    setSeatNumbers(seatNumbers);
+
+    return data; // Return the fetched room data for further use
   } catch (error) {
-    console.error("Error booking seats:", error);
+    console.error("Error fetching room info:", error);
+    throw new Error("Failed to load room.");
   } finally {
-    setReservationLoading(false);
+    setRoomLoading(false);
   }
 }
+
+//* Booking requests
 
 export async function fetchTakenSeats(
   screeningId,
@@ -224,7 +138,67 @@ export async function fetchTakenSeats(
     return takenSeats; // Return the fetched taken seats for further use
   } catch (error) {
     console.error("Error fetching taken seats:", error);
+    throw new Error("Failed to load taken seats.");
   } finally {
     setTakenSeatsLoading(false);
+  }
+}
+
+export async function confirmReservation(
+  screeningId,
+  customerName,
+  selectedSeats,
+  setSelectedSeats,
+  close,
+  setTakenSeats,
+  setReservationLoading,
+  setTakenSeatsLoading,
+  setReservationError,
+) {
+  setReservationLoading(true);
+  setReservationError("");
+
+  try {
+    const response = await fetch("/api/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        screeningId,
+        customerName,
+        seats: selectedSeats,
+      }),
+    });
+
+    if (response.status === 409) {
+      const errorData = await response.json();
+
+      await fetchTakenSeats(screeningId, setTakenSeats, setTakenSeatsLoading);
+      setSelectedSeats({});
+      setReservationError(errorData.error);
+
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    // Update the taken seats state
+    setTakenSeats((prevTakenSeats) => ({
+      ...prevTakenSeats,
+      ...selectedSeats,
+    }));
+
+    // Clear the selected seats after booking
+    setSelectedSeats({});
+    close();
+  } catch (error) {
+    setReservationError(
+      error.message || "An error occurred while confirming the reservation.",
+    );
+  } finally {
+    setReservationLoading(false);
   }
 }

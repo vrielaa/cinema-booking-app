@@ -19,8 +19,8 @@ bookingsRouter.post("/", (request, response) => {
 
   for (const seat in seats) {
     if (takenSeats[seat]) {
-      return response.status(400).json({
-        error: `Seat ${seat} is already taken for this screening.`,
+      return response.status(409).json({
+        error: `Seat ${seat} has just been reserved. Please select another seat.`,
       });
     }
   }
@@ -59,6 +59,7 @@ bookingsRouter.get("/:screeningId", (request, response) => {
   // Combine all booked seats into a single object
   const takenSeats = bookings.reduce((acc, booking) => {
     const seats = JSON.parse(booking.seats);
+
     return { ...acc, ...seats };
   }, {});
 

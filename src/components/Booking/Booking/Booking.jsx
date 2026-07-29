@@ -3,11 +3,13 @@ import { useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
 import BookingMovieCard from "../BookingMovieCard/BookingMovieCard";
-import BookingReserveModal from "../BookingReserveModal/BookingReserveModal";
+import BookingLegend from "../BookingLegend/BookingLegend";
+import BookingHeading from "../BookingHeading/BookingHeading";
+import BookingSummary from "../BookingSummary/BookingSummary";
 import {
   fetchMovie,
   fetchRoom,
-  fetchScreeningRoomMovieTakenSeats,
+  fetchScreeningFromScreeningId,
   fetchTakenSeats,
 } from "../../../utils/fetchFunctions";
 
@@ -34,49 +36,59 @@ export default function Booking({ screeningId }) {
   const cost = Object.keys(selectedSeats).length * seatPrice;
   const bookingLoading =
     screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
-
-  const [reservationLoading, setReservationLoading] = useState(false);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookingError, setBookingError] = useState("");
 
   useEffect(() => {
-    const stateMatchesUrl =
-      screeningFromState &&
-      String(screeningFromState.id) === String(screeningId);
-
-    if (stateMatchesUrl) {
-      setScreening(screeningFromState);
-      setScreeningLoading(false);
-
+    async function loadBooking() {
+      setBookingError("");
+      setScreeningLoading(true);
       setRoomLoading(true);
-      fetchRoom(
-        screeningFromState.room_id,
-        setRowLabels,
-        setSeatNumbers,
-        setRoomLoading,
-      );
-      fetchMovie(screeningFromState.movie_id, setMovie, setMovieLoading);
-      fetchTakenSeats(
-        screeningFromState.id,
-        setTakenSeats,
-        setTakenSeatsLoading,
-      );
+      setMovieLoading(true);
+      setTakenSeatsLoading(true);
 
-      return; // Exit early if the state matches the URL
+      try {
+        const stateMatchesUrl =
+          screeningFromState &&
+          String(screeningFromState.id) === String(screeningId);
+
+        let screeningData;
+
+        if (stateMatchesUrl) {
+          screeningData = screeningFromState;
+          setScreening(screeningData);
+          setScreeningLoading(false);
+        } else {
+          screeningData = await fetchScreeningFromScreeningId(
+            screeningId,
+            setScreening,
+            setScreeningLoading,
+          );
+        }
+
+        await Promise.all([
+          fetchRoom(
+            screeningData.room_id,
+            setRowLabels,
+            setSeatNumbers,
+            setRoomLoading,
+          ),
+          fetchMovie(screeningData.movie_id, setMovie, setMovieLoading),
+          fetchTakenSeats(
+            screeningData.id,
+            setTakenSeats,
+            setTakenSeatsLoading,
+          ),
+        ]);
+      } catch (error) {
+        setScreeningLoading(false);
+        setRoomLoading(false);
+        setMovieLoading(false);
+        setTakenSeatsLoading(false);
+        setBookingError(error.message);
+      }
     }
 
-    fetchScreeningRoomMovieTakenSeats(
-      screeningId,
-      setScreening,
-      setScreeningLoading,
-      setRowLabels,
-      setSeatNumbers,
-      setRoomLoading,
-      setMovie,
-      setMovieLoading,
-      setTakenSeats,
-      setTakenSeatsLoading,
-    );
+    loadBooking();
   }, [screeningId, screeningFromState]);
 
   if (bookingLoading) {
@@ -88,15 +100,17 @@ export default function Booking({ screeningId }) {
     );
   }
 
+  if (bookingError) {
+    return (
+      <section className="booking-error" role="alert">
+        <p className="booking-error-message">{bookingError}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="booking-page">
-      <div className="booking-heading">
-        <p className="booking-eyebrow">Seat reservation</p>
-        <h1 className="booking-title">Choose your seats</h1>
-        <p className="booking-intro">
-          Select the perfect place and enjoy the show.
-        </p>
-      </div>
+      <BookingHeading />
 
       <div className="booking-layout">
         <BookingMovieCard
@@ -121,57 +135,19 @@ export default function Booking({ screeningId }) {
             takenSeats={takenSeats}
           />
 
-          <div className="booking-legend">
-            <div className="booking-legend-item">
-              <span className="booking-legend-seat booking-legend-available"></span>
-              <span className="booking-legend-label">Available</span>
-            </div>
-            <div className="booking-legend-item">
-              <span className="booking-legend-seat booking-legend-taken"></span>
-              <span className="booking-legend-label">Taken</span>
-            </div>
-            <div className="booking-legend-item">
-              <span className="booking-legend-seat booking-legend-selected"></span>
-              <span className="booking-legend-label">Selected</span>
-            </div>
-          </div>
+          <BookingLegend />
 
-          <div className="booking-summary">
-            <div className="booking-summary-copy">
-              <span className="booking-summary-label">Your seats</span>
-              <strong className="booking-summary-value">
-                {isAnySeatSelected
-                  ? Object.keys(selectedSeats).join(", ")
-                  : "None selected"}
-              </strong>
-            </div>
-            <div className="booking-summary-total">
-              <span className="booking-summary-label">Total</span>
-              <strong className="booking-price">${cost.toFixed(2)}</strong>
-            </div>
-            <button
-              className="booking-confirm-button"
-              type="button"
-              disabled={!isAnySeatSelected || takenSeatsLoading}
-              onClick={() => setIsModalOpen(true)}
-            >
-              Reserve seats
-            </button>
-
-            {isModalOpen ? (
-              <BookingReserveModal
-                screeningId={screeningId}
-                title={movie?.title}
-                date={screening?.screening_date}
-                time={screening?.screening_time}
-                roomId={screening?.room_id}
-                selectedSeats={selectedSeats}
-                setSelectedSeats={setSelectedSeats}
-                setTakenSeats={setTakenSeats}
-                close={() => setIsModalOpen(false)}
-              />
-            ) : null}
-          </div>
+          <BookingSummary
+            isAnySeatSelected={isAnySeatSelected}
+            selectedSeats={selectedSeats}
+            cost={cost}
+            takenSeatsLoading={takenSeatsLoading}
+            movie={movie}
+            screening={screening}
+            setSelectedSeats={setSelectedSeats}
+            setTakenSeats={setTakenSeats}
+            setTakenSeatsLoading={setTakenSeatsLoading}
+          />
         </div>
       </div>
     </section>
