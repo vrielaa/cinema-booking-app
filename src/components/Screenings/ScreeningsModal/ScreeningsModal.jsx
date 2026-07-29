@@ -30,10 +30,10 @@ const Modal = ({
   }, []);
 
   return createPortal(
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="screenings-modal-overlay">
+      <div className="screenings-modal">
         <button
-          className="modal-close-button"
+          className="screenings-modal-close-button"
           type="button"
           onClick={close}
           aria-label="Close modal"

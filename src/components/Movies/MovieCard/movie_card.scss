@@ -1,9 +1,6 @@
 .movie-card {
-  border: none;
-  padding: 0;
   background: none;
   font: inherit;
-  color: inherit;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -15,6 +12,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   color: rgb(251, 229, 182);
+}
+
+.movie-card-title {
+  font-family: var(--font-display);
 }
 
 .movie-duration {

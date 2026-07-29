@@ -9,7 +9,7 @@ export default function ScreeningsMovieInfo({
 }) {
   return (
     <>
-      <div className="movie-poster-frame">
+      <div className="screenings-movie-poster-frame">
         <img
           className="screenings-movie-poster"
           src={poster_path}
@@ -17,14 +17,14 @@ export default function ScreeningsMovieInfo({
         />
       </div>
 
-      <div className="movie-info">
-        <h1 className="movie-title">{title}</h1>
+      <div className="screenings-movie-info">
+        <h1 className="screenings-movie-title">{title}</h1>
         <p className="screenings-movie-duration">
           Duration: {Math.floor(duration_minutes / 60)}h {duration_minutes % 60}
           m
         </p>
         <p className="screenings-movie-genre">{genre}</p>
-        <p className="movie-description">{description}</p>
+        <p className="screenings-movie-description">{description}</p>
       </div>
     </>
   );

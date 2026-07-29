@@ -60,36 +60,4 @@
   padding-bottom: 2rem;
   font-size: 2rem;
   text-align: center;
-  text-justify: center;
-}
-.screenings-info {
-  grid-area: screenings;
-
-  min-width: 0;
-  overflow-x: auto;
-}
-
-.screenings-title {
-  display: flex;
-  align-items: center;
-  gap: 1.6rem;
-
-  margin-bottom: 1.8rem;
-
-  color: rgb(232, 216, 181);
-  font-size: 2.2rem;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.screenings-title::before,
-.screenings-title::after {
-  content: "";
-
-  flex: 1;
-
-  height: 0.1rem;
-
-  background-color: rgba(190, 145, 64, 0.5);
 }
