@@ -91,10 +91,31 @@
 
 @media (max-width: 660px) {
   .booking-movie-card {
-    grid-template-columns: 11rem 1fr;
+    grid-template-columns: 10rem minmax(0, 1fr);
   }
 
   .booking-movie-info {
-    padding: 1.8rem;
+    padding: 1.4rem;
+  }
+
+  .booking-movie-title {
+    font-size: 2rem;
+  }
+
+  .booking-details {
+    gap: 0.8rem;
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+  }
+
+  .booking-detail-label,
+  .booking-detail-value {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .booking-movie-card {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
   }
 }

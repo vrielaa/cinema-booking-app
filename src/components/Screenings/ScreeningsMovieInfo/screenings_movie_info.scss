@@ -64,7 +64,7 @@
 
 @media (max-width: 760px) {
   .screenings-movie-poster-frame {
-    width: min(100%, 20rem);
+    width: 100%;
   }
 
   .screenings-movie-info {
@@ -73,5 +73,29 @@
 
   .screenings-movie-title {
     font-size: 2.6rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .screenings-movie-info {
+    gap: 0.7rem;
+    padding-right: 3.2rem;
+  }
+
+  .screenings-movie-title {
+    font-size: 1.9rem;
+  }
+
+  .screenings-movie-duration {
+    font-size: 1.4rem;
+  }
+
+  .screenings-movie-genre {
+    font-size: 1rem;
+  }
+
+  .screenings-movie-description {
+    font-size: 1.3rem;
+    line-height: 1.35;
   }
 }

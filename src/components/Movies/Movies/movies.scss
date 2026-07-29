@@ -1,11 +1,11 @@
 .movies-container {
-  margin-top: 10rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
   gap: 2rem;
-  padding-bottom: 2rem;
-  padding-left: 5rem;
-  padding-right: 5rem;
+
+  width: min(100% - 6rem, 118rem);
+  margin: 10rem auto 0;
+  padding-bottom: 4rem;
 }
 
 .movies-loading {
@@ -15,4 +15,21 @@
   transform: translate(-50%, -50%);
   font-size: 2rem;
   color: rgb(251, 229, 182);
+}
+
+@media (max-width: 600px) {
+  .movies-container {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+
+    width: min(100% - 2.4rem, 38rem);
+    margin-top: 6rem;
+    padding-bottom: 3rem;
+  }
+
+  .movies-loading {
+    width: calc(100% - 4rem);
+    font-size: 1.6rem;
+    text-align: center;
+  }
 }

@@ -25,3 +25,25 @@
   color: rgba(251, 229, 182, 0.72);
   font-size: 1.7rem;
 }
+
+@media (max-width: 600px) {
+  .booking-heading {
+    margin-bottom: 2.4rem;
+    padding: 0 1rem;
+  }
+
+  .booking-eyebrow {
+    font-size: 1.1rem;
+    letter-spacing: 0.18rem;
+  }
+
+  .booking-title {
+    font-size: 3rem;
+  }
+
+  .booking-intro {
+    margin-top: 0.8rem;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+}

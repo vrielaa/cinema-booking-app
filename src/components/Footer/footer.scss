@@ -6,3 +6,9 @@
   background-color: rgb(51, 22, 17);
   box-shadow: 0 -0.6rem 1.6rem var(--gold-border-color);
 }
+
+@media (max-width: 600px) {
+  .footer {
+    height: 7rem;
+  }
+}

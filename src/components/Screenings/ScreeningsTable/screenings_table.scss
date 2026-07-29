@@ -61,3 +61,25 @@
   font-size: 2rem;
   text-align: center;
 }
+
+@media (max-width: 600px) {
+  .screenings-table {
+    min-width: 52rem;
+  }
+
+  .screenings-table-header-cell,
+  .screenings-table-cell {
+    padding: 0.8rem 1rem;
+    font-size: 1.4rem;
+  }
+
+  .screening-select-button {
+    min-width: 7rem;
+    padding: 0.7rem 1rem;
+    font-size: 1.3rem;
+  }
+
+  .screenings-loading {
+    font-size: 1.5rem;
+  }
+}

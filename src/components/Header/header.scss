@@ -114,3 +114,28 @@
 
   transform: translateX(-0.05rem);
 }
+
+@media (max-width: 600px) {
+  .header {
+    height: 11rem;
+  }
+
+  .header-nav {
+    padding: 1.4rem 0;
+  }
+
+  .logo {
+    width: 11rem;
+    height: 2.2rem;
+  }
+
+  .logo-text {
+    font-size: 2.2rem;
+  }
+
+  .decorator-rectangle {
+    top: 10.9rem;
+    width: 13rem;
+    height: 3.8rem;
+  }
+}

@@ -34,3 +34,13 @@
   color: rgba(251, 229, 182, 0.28);
   cursor: not-allowed;
 }
+
+@media (max-width: 660px) {
+  .booking-seat {
+    width: 3.1rem;
+    height: 3rem;
+
+    border-radius: 0.6rem 0.6rem 0.3rem 0.3rem;
+    font-size: 1rem;
+  }
+}

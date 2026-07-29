@@ -59,11 +59,24 @@
 
 @media (max-width: 660px) {
   .booking-summary {
-    min-width: 52rem;
     grid-template-columns: 1fr auto;
+    gap: 1.6rem;
+
+    margin-top: 2.2rem;
+    padding: 1.6rem;
   }
 
   .booking-confirm-button {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 380px) {
+  .booking-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-confirm-button {
+    grid-column: auto;
   }
 }
