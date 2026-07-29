@@ -1,3 +1,38 @@
+.booking-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+
+  min-height: calc(100vh - 25rem);
+
+  color: rgb(251, 229, 182);
+}
+
+.booking-loading-spinner {
+  width: 4.8rem;
+  height: 4.8rem;
+
+  border: 0.4rem solid rgba(190, 145, 64, 0.25);
+  border-top-color: rgb(190, 145, 64);
+  border-radius: 50%;
+  animation: booking-loading-spin 0.8s linear infinite;
+}
+
+.booking-loading-text {
+  color: rgba(251, 229, 182, 0.72);
+  font-size: 1.6rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+}
+
+@keyframes booking-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .booking-page {
   width: min(100% - 4rem, 118rem);
   margin: 0 auto;

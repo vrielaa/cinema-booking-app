@@ -67,7 +67,7 @@ export async function fetchScreeningFromScreeningId(
   }
 }
 
-export async function fetchScreeningRoomMovie(
+export async function fetchScreeningRoomMovieTakenSeats(
   screeningId,
   setScreening,
   setScreeningLoading,
@@ -76,13 +76,17 @@ export async function fetchScreeningRoomMovie(
   setRoomLoading,
   setMovie,
   setMovieLoading,
+  setTakenSeats,
+  setTakenSeatsLoading,
 ) {
   setScreeningLoading(true);
   setRoomLoading(true);
   setMovieLoading(true);
+  setTakenSeatsLoading(true);
 
   try {
     let roomResponse = null;
+    let takenSeatsResponse = null;
 
     const screeningResponse = await fetchScreeningFromScreeningId(
       screeningId,
@@ -96,6 +100,12 @@ export async function fetchScreeningRoomMovie(
         setRowLabels,
         setSeatNumbers,
         setRoomLoading,
+      );
+
+      takenSeatsResponse = await fetchTakenSeats(
+        screeningId,
+        setTakenSeats,
+        setTakenSeatsLoading,
       );
     }
 
@@ -114,6 +124,7 @@ export async function fetchScreeningRoomMovie(
     setScreeningLoading(false);
     setRoomLoading(false);
     setMovieLoading(false);
+    setTakenSeatsLoading(false);
   }
 }
 
@@ -194,5 +205,28 @@ export async function confirmReservation(
     close();
   } catch (error) {
     console.error("Error booking seats:", error);
+  }
+}
+
+export async function fetchTakenSeats(
+  screeningId,
+  setTakenSeats,
+  setTakenSeatsLoading,
+) {
+  setTakenSeatsLoading(true);
+  try {
+    const response = await fetch(`/api/bookings/${screeningId}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const takenSeats = await response.json();
+    setTakenSeats(takenSeats);
+
+    return takenSeats; // Return the fetched taken seats for further use
+  } catch (error) {
+    console.error("Error fetching taken seats:", error);
+  } finally {
+    setTakenSeatsLoading(false);
   }
 }

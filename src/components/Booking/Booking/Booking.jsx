@@ -7,7 +7,8 @@ import BookingReserveModal from "../BookingReserveModal/BookingReserveModal";
 import {
   fetchMovie,
   fetchRoom,
-  fetchScreeningRoomMovie,
+  fetchScreeningRoomMovieTakenSeats,
+  fetchTakenSeats,
 } from "../../../utils/fetchFunctions";
 
 export default function Booking({ screeningId }) {
@@ -27,9 +28,12 @@ export default function Booking({ screeningId }) {
 
   const [selectedSeats, setSelectedSeats] = useState({});
   const [takenSeats, setTakenSeats] = useState({});
+  const [takenSeatsLoading, setTakenSeatsLoading] = useState(true);
   const seatPrice = 10; // Assuming each seat costs $10
   const isAnySeatSelected = Object.keys(selectedSeats).length > 0;
   const cost = Object.keys(selectedSeats).length * seatPrice;
+  const bookingLoading =
+    screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,11 +54,16 @@ export default function Booking({ screeningId }) {
         setRoomLoading,
       );
       fetchMovie(screeningFromState.movie_id, setMovie, setMovieLoading);
+      fetchTakenSeats(
+        screeningFromState.id,
+        setTakenSeats,
+        setTakenSeatsLoading,
+      );
 
       return; // Exit early if the state matches the URL
     }
 
-    fetchScreeningRoomMovie(
+    fetchScreeningRoomMovieTakenSeats(
       screeningId,
       setScreening,
       setScreeningLoading,
@@ -63,8 +72,19 @@ export default function Booking({ screeningId }) {
       setRoomLoading,
       setMovie,
       setMovieLoading,
+      setTakenSeats,
+      setTakenSeatsLoading,
     );
   }, [screeningId, screeningFromState]);
+
+  if (bookingLoading) {
+    return (
+      <section className="booking-loading" role="status" aria-live="polite">
+        <div className="booking-loading-spinner" aria-hidden="true"></div>
+        <p className="booking-loading-text">Loading booking...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="booking-page">
@@ -130,7 +150,7 @@ export default function Booking({ screeningId }) {
             <button
               className="booking-confirm-button"
               type="button"
-              disabled={!isAnySeatSelected}
+              disabled={!isAnySeatSelected || takenSeatsLoading}
               onClick={() => setIsModalOpen(true)}
             >
               Reserve seats

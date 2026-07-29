@@ -6,6 +6,24 @@ export const bookingsRouter = Router();
 bookingsRouter.post("/", (request, response) => {
   const { screeningId, customerName, seats } = request.body;
 
+  // check if the seats are already taken for the given screening
+  const existingBookings = db
+    .prepare("SELECT seats FROM bookings WHERE screening_id = ?")
+    .all(screeningId);
+
+  const takenSeats = existingBookings.reduce((acc, booking) => {
+    const bookedSeats = JSON.parse(booking.seats);
+    return { ...acc, ...bookedSeats };
+  }, {});
+
+  for (const seat in seats) {
+    if (takenSeats[seat]) {
+      return response.status(400).json({
+        error: `Seat ${seat} is already taken for this screening.`,
+      });
+    }
+  }
+
   const result = db
     .prepare(
       `
@@ -21,4 +39,27 @@ bookingsRouter.post("/", (request, response) => {
     customerName,
     seats,
   });
+});
+
+bookingsRouter.get("/", (request, response) => {
+  const bookings = db.prepare("SELECT * FROM bookings").all();
+  response.json(bookings);
+});
+
+//taken seats for a specific screening
+
+bookingsRouter.get("/:screeningId", (request, response) => {
+  const { screeningId } = request.params;
+
+  const bookings = db
+    .prepare("SELECT seats FROM bookings WHERE screening_id = ?")
+    .all(screeningId);
+
+  // Combine all booked seats into a single object
+  const takenSeats = bookings.reduce((acc, booking) => {
+    const seats = JSON.parse(booking.seats);
+    return { ...acc, ...seats };
+  }, {});
+
+  response.json(takenSeats);
 });
