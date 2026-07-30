@@ -16,6 +16,7 @@ The project focuses on component composition, state management, routing, asynchr
 - Loading and error states
 - Booking conflict handling with an HTTP `409` response
 - Automatic refresh of taken seats after a conflict
+- Interactive API documentation with Swagger UI
 - Responsive layouts for desktop, tablet, and mobile screens
 
 ## Tech Stack
@@ -33,6 +34,7 @@ The project focuses on component composition, state management, routing, asynchr
 - Express
 - SQLite
 - better-sqlite3
+- OpenAPI and Swagger UI
 
 ### Development tools
 
@@ -70,6 +72,10 @@ npm run server
 
 The API will run at `http://localhost:3000`.
 
+The interactive API documentation is available at
+`http://localhost:3000/api/docs` or through the Vite proxy at
+`http://localhost:5173/api/docs` when both servers are running.
+
 Start the frontend in a second terminal:
 
 ```bash
@@ -103,8 +109,10 @@ cinema-booking-app/
 ├── public/                 # Images and movie posters
 ├── server/
 │   ├── db/                 # Database schema and seed data
+│   ├── models/             # Reusable OpenAPI schemas
 │   ├── routes/             # Express API routes
-│   └── index.js            # API entry point
+│   ├── index.js            # API entry point
+│   └── swagger.js          # OpenAPI configuration
 ├── src/
 │   ├── components/         # React components grouped by feature
 │   ├── hooks/              # Custom React hooks
@@ -120,15 +128,19 @@ cinema-booking-app/
 | Method | Endpoint                                 | Description                         |
 | ------ | ---------------------------------------- | ----------------------------------- |
 | `GET`  | `/api/movies`                            | Returns all movies                  |
+| `GET`  | `/api/movies/search`                     | Searches and filters movies         |
+| `GET`  | `/api/movies/genres`                     | Returns all movie genres            |
 | `GET`  | `/api/movies/:movieId`                   | Returns one movie                   |
 | `GET`  | `/api/screenings`                        | Returns all screenings              |
 | `GET`  | `/api/screenings/:movieId`               | Returns screenings for a movie      |
 | `GET`  | `/api/screenings/screening/:screeningId` | Returns one screening               |
 | `GET`  | `/api/rooms`                             | Returns all rooms                   |
 | `GET`  | `/api/rooms/:roomId`                     | Returns room information            |
-| `GET`  | `/api/bookings`                          | Returns all bookings                |
 | `GET`  | `/api/bookings/:screeningId`             | Returns taken seats for a screening |
 | `POST` | `/api/bookings`                          | Creates a reservation               |
+
+The full request parameters, schemas, examples, and response codes are available
+in Swagger UI under `/api/docs`.
 
 ## Booking Flow
 
@@ -150,3 +162,4 @@ cinema-booking-app/
 - Handling loading, error, and conflict states
 - Building a responsive interface with component-specific SCSS
 - Connecting a React frontend to an Express and SQLite backend
+- Describing and testing API endpoints with OpenAPI and Swagger UI

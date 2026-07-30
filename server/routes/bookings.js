@@ -3,6 +3,33 @@ import { db } from "../db/database.js";
 
 export const bookingsRouter = Router();
 
+/**
+ * @openapi
+ * /api/bookings:
+ *   post:
+ *     tags:
+ *       - Bookings
+ *     summary: Create a booking
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateBookingRequest"
+ *     responses:
+ *       201:
+ *         description: Booking created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/CreateBookingResponse"
+ *       409:
+ *         description: One of the selected seats has already been reserved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 bookingsRouter.post("/", (request, response) => {
   const { screeningId, customerName, seats } = request.body;
 
@@ -42,13 +69,29 @@ bookingsRouter.post("/", (request, response) => {
   });
 });
 
-bookingsRouter.get("/", (request, response) => {
-  const bookings = db.prepare("SELECT * FROM bookings").all();
-  response.json(bookings);
-});
-
-//taken seats for a specific screening
-
+/**
+ * @openapi
+ * /api/bookings/{screeningId}:
+ *   get:
+ *     tags:
+ *       - Bookings
+ *     summary: Get taken seats for a screening
+ *     parameters:
+ *       - in: path
+ *         name: screeningId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Screening ID
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: A map of seats already reserved for the screening
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SeatMap"
+ */
 bookingsRouter.get("/:screeningId", (request, response) => {
   const { screeningId } = request.params;
 

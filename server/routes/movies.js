@@ -3,12 +3,73 @@ import { db } from "../db/database.js";
 
 export const moviesRouter = Router();
 
+/**
+ * @openapi
+ * /api/movies:
+ *   get:
+ *     tags:
+ *       - Movies
+ *     summary: Get all movies
+ *     responses:
+ *       200:
+ *         description: A list of all movies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/Movie"
+ */
 moviesRouter.get("/", (req, res) => {
   const movies = db.prepare("SELECT * FROM movies").all();
   res.json(movies);
 });
 
 // Search and filter movies
+/**
+ * @openapi
+ * /api/movies/search:
+ *   get:
+ *     tags:
+ *       - Movies
+ *     summary: Search and filter movies
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         schema:
+ *           type: string
+ *         description: Part of a movie title
+ *         example: Godfather
+ *       - in: query
+ *         name: genre
+ *         schema:
+ *           type: string
+ *         description: Movie genre. Use all or omit the parameter to include every genre.
+ *         example: Crime
+ *       - in: query
+ *         name: minDuration
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: Minimum duration in minutes
+ *         example: 90
+ *       - in: query
+ *         name: maxDuration
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: Maximum duration in minutes
+ *         example: 180
+ *     responses:
+ *       200:
+ *         description: Movies matching the selected filters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/Movie"
+ */
 moviesRouter.get("/search", (req, res) => {
   const title = req.query.title || "";
   const genre = req.query.genre || "all";
@@ -44,11 +105,61 @@ moviesRouter.get("/search", (req, res) => {
   res.json(movies);
 });
 
+/**
+ * @openapi
+ * /api/movies/genres:
+ *   get:
+ *     tags:
+ *       - Movies
+ *     summary: Get all movie genres
+ *     responses:
+ *       200:
+ *         description: A list of unique movie genres
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *             example:
+ *               - Crime
+ *               - Drama
+ *               - Science Fiction
+ */
 moviesRouter.get("/genres", (req, res) => {
   const genres = db.prepare("SELECT DISTINCT genre FROM movies").all();
   res.json(genres.map((g) => g.genre));
 });
 
+/**
+ * @openapi
+ * /api/movies/{movieId}:
+ *   get:
+ *     tags:
+ *       - Movies
+ *     summary: Get a movie by ID
+ *     parameters:
+ *       - in: path
+ *         name: movieId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Movie ID
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Movie details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Movie"
+ *       404:
+ *         description: Movie not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 moviesRouter.get("/:movieId", (req, res) => {
   const movieId = req.params.movieId;
   const movie = db.prepare("SELECT * FROM movies WHERE id = ?").get(movieId);
