@@ -5,7 +5,7 @@ import { screeningsRouter } from "./routes/screenings.js";
 import { roomsRouter } from "./routes/rooms.js";
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.use(express.json());
 

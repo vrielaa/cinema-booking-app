@@ -22,7 +22,7 @@ The project focuses on component composition, state management, routing, asynchr
 
 ### Frontend
 
-- React 18
+- React 19
 - TanStack Router
 - Vite
 - SCSS
@@ -68,7 +68,7 @@ Start the API server in the first terminal:
 npm run server
 ```
 
-The API will run at `http://localhost:3001`.
+The API will run at `http://localhost:3000`.
 
 Start the frontend in a second terminal:
 
