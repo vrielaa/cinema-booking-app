@@ -1,15 +1,23 @@
 import "./booking_summary.scss";
 import { useState } from "react";
 import BookingReserveModal from "../BookingReserveModal/BookingReserveModal";
+import type { Screening } from "../../../types/screening";
+import type { SeatMap, SeatSetter } from "../../../types/booking";
 
 export default function BookingSummary({
   isAnySeatSelected,
   selectedSeats,
   cost,
-  movie,
   screening,
   setSelectedSeats,
   setTakenSeats,
+}: {
+  isAnySeatSelected: boolean;
+  selectedSeats: SeatMap;
+  cost: number;
+  screening: Screening;
+  setSelectedSeats: SeatSetter;
+  setTakenSeats: SeatSetter;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -38,11 +46,7 @@ export default function BookingSummary({
 
       {isModalOpen ? (
         <BookingReserveModal
-          screeningId={screening?.id}
-          title={movie?.title}
-          date={screening?.screening_date}
-          time={screening?.screening_time}
-          roomId={screening?.room_id}
+          screening={screening}
           selectedSeats={selectedSeats}
           setSelectedSeats={setSelectedSeats}
           setTakenSeats={setTakenSeats}

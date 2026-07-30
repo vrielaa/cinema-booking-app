@@ -6,26 +6,33 @@ import {
   fetchScreeningFromScreeningId,
   fetchTakenSeats,
 } from "../utils/fetchFunctions";
+import type { Movie } from "../types/movie";
+import type { Screening } from "../types/screening";
+import type { SeatMap } from "../types/booking";
 
 const seatPrice = 10;
 
-export default function useBooking(screeningId) {
+export default function useBooking(screeningId: string) {
   const screeningFromState = useLocation({
     select: (location) => location.state?.screening,
   });
 
-  const [screening, setScreening] = useState(screeningFromState ?? null);
+  const [screening, setScreening] = useState<Screening | null>(
+    screeningFromState ?? null,
+  );
   const [screeningLoading, setScreeningLoading] = useState(!screeningFromState);
 
-  const [movie, setMovie] = useState(undefined);
+  const [movie, setMovie] = useState<Movie | undefined>(undefined);
   const [movieLoading, setMovieLoading] = useState(true);
 
-  const [rowLabels, setRowLabels] = useState(undefined);
-  const [seatNumbers, setSeatNumbers] = useState(undefined);
+  const [rowLabels, setRowLabels] = useState<string[] | undefined>(undefined);
+  const [seatNumbers, setSeatNumbers] = useState<number[] | undefined>(
+    undefined,
+  );
   const [roomLoading, setRoomLoading] = useState(true);
 
-  const [selectedSeats, setSelectedSeats] = useState({});
-  const [takenSeats, setTakenSeats] = useState({});
+  const [selectedSeats, setSelectedSeats] = useState<SeatMap>({});
+  const [takenSeats, setTakenSeats] = useState<SeatMap>({});
   const [takenSeatsLoading, setTakenSeatsLoading] = useState(true);
   const [bookingError, setBookingError] = useState("");
 
@@ -76,12 +83,14 @@ export default function useBooking(screeningId) {
             setTakenSeatsLoading,
           ),
         ]);
-      } catch (error) {
+      } catch (error: unknown) {
         setScreeningLoading(false);
         setRoomLoading(false);
         setMovieLoading(false);
         setTakenSeatsLoading(false);
-        setBookingError(error.message);
+        setBookingError(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
       }
     }
 

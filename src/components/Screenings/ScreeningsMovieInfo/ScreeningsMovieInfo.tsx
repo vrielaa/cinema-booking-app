@@ -1,12 +1,9 @@
 import "./screenings_movie_info.scss";
+import type { Movie } from "../../../types/movie";
 
-export default function ScreeningsMovieInfo({
-  title,
-  genre,
-  description,
-  duration_minutes,
-  poster_path,
-}) {
+export default function ScreeningsMovieInfo({ movie }: { movie: Movie }) {
+  const { title, genre, description, duration_minutes, poster_path } = movie;
+
   return (
     <>
       <div className="screenings-movie-poster-frame">

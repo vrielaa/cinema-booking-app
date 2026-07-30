@@ -1,13 +1,21 @@
 import "./booking_movie_card.scss";
+import type { Movie } from "../../../types/movie";
+import type { Screening } from "../../../types/screening";
 
 export default function BookingMovieCard({
-  src,
-  title,
-  genre,
-  date,
-  time,
-  roomId,
+  movie,
+  screening,
+}: {
+  movie: Movie;
+  screening: Screening;
 }) {
+  const { poster_path: src, title, genre } = movie;
+  const {
+    screening_date: date,
+    screening_time: time,
+    room_id: roomId,
+  } = screening;
+
   return (
     <aside className="booking-movie-card">
       <img className="booking-poster" src={src} alt={title} />

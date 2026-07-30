@@ -2,22 +2,33 @@ import "./movie_filters.scss";
 import { useState, useEffect } from "react";
 import { searchMovies, fetchGenres } from "../../../utils/fetchFunctions";
 import useDebounce from "../../../hooks/useDebounce";
+import type { DurationRanges, Movie } from "../../../types/movie";
 
-export default function MovieFilters({ setMoviesLoading, setMovies }) {
+export default function MovieFilters({
+  setMoviesLoading,
+  setMovies,
+}: {
+  setMoviesLoading: (loading: boolean) => void;
+  setMovies: (movies: Movie[]) => void;
+}) {
   const [titleFilter, setTitleFilter] = useState("");
   const [genreFilter, setGenreFilter] = useState("all");
-  const [genres, setGenres] = useState([]);
+  const [genres, setGenres] = useState<string[]>([]);
   const [genresLoading, setGenresLoading] = useState(true);
   const [durationFilter, setDurationFilter] = useState("all");
 
   const debouncedTitleFilter = useDebounce(titleFilter, 500);
 
-  const durationRanges = {
-    all: { minDuration: "", maxDuration: "" },
-    "under-100": { minDuration: "", maxDuration: 99 },
-    "100-129": { minDuration: 100, maxDuration: 129 },
-    "130-159": { minDuration: 130, maxDuration: 159 },
-    "160-plus": { minDuration: 160, maxDuration: "" },
+  const durationRanges: DurationRanges = {
+    all: { minDuration: "", maxDuration: "", label: "Any duration" },
+    "under-100": {
+      minDuration: "",
+      maxDuration: 99,
+      label: "Under 100 minutes",
+    },
+    "100-129": { minDuration: 100, maxDuration: 129, label: "100–129 minutes" },
+    "130-159": { minDuration: 130, maxDuration: 159, label: "130–159 minutes" },
+    "160-plus": { minDuration: 160, maxDuration: "", label: "160+ minutes" },
   };
 
   const { minDuration, maxDuration } = durationRanges[durationFilter];
@@ -101,11 +112,11 @@ export default function MovieFilters({ setMoviesLoading, setMovies }) {
             value={durationFilter}
             onChange={(event) => setDurationFilter(event.target.value)}
           >
-            <option value="all">Any duration</option>
-            <option value="under-100">Under 100 minutes</option>
-            <option value="100-129">100–129 minutes</option>
-            <option value="130-159">130–159 minutes</option>
-            <option value="160-plus">160+</option>
+            {Object.entries(durationRanges).map(([key, range]) => (
+              <option key={key} value={key}>
+                {range.label}
+              </option>
+            ))}
           </select>
         </label>
 

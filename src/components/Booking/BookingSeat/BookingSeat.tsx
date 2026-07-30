@@ -1,4 +1,5 @@
 import "./booking_seat.scss";
+import type { BookingSeatProps } from "../../../types/booking";
 
 export default function BookingSeat({
   rowLabel,
@@ -6,7 +7,7 @@ export default function BookingSeat({
   selectedSeats,
   setSelectedSeats,
   takenSeats,
-}) {
+}: BookingSeatProps) {
   const seatId = `${rowLabel}${seatNumber}`;
   const isSelected = Boolean(selectedSeats[seatId]);
   const isTaken = Boolean(takenSeats[seatId]);

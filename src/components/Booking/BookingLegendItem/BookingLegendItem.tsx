@@ -1,6 +1,6 @@
 import "./booking_legend_item.scss";
 
-export default function BookingLegendItem({ type }) {
+export default function BookingLegendItem({ type }: { type: string }) {
   return (
     <div className="booking-legend-item">
       <span

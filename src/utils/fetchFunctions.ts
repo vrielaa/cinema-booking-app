@@ -1,6 +1,18 @@
 //* Movie requests
 
-export async function fetchMovies(setMovies, setMoviesLoading) {
+import type { SeatMap, SeatSetter } from "../types/booking";
+import type { Movie } from "../types/movie";
+import type { Room } from "../types/room";
+import type {
+  Screening,
+  ScreeningSetter,
+  ScreeningsSetter,
+} from "../types/screening";
+
+export async function fetchMovies(
+  setMovies: (movies: Movie[]) => void,
+  setMoviesLoading: (loading: boolean) => void,
+): Promise<void> {
   setMoviesLoading(true);
 
   try {
@@ -8,7 +20,7 @@ export async function fetchMovies(setMovies, setMoviesLoading) {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: Movie[] = await response.json();
     setMovies(data);
   } catch (error) {
     console.error("Error fetching movies:", error);
@@ -17,41 +29,45 @@ export async function fetchMovies(setMovies, setMoviesLoading) {
   }
 }
 
-export async function fetchMovie(movieId, setMovie, setMovieLoading) {
+export async function fetchMovie(
+  movieId: number,
+  setMovie: (movie: Movie) => void,
+  setMovieLoading: (loading: boolean) => void,
+): Promise<void> {
   setMovieLoading(true);
   try {
     const response = await fetch(`/api/movies/${movieId}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: Movie = await response.json();
     setMovie(data);
   } catch (error) {
     console.error("Error fetching movie:", error);
-    throw new Error("Failed to load movie.");
+    throw new Error("Failed to load movie.", { cause: error });
   } finally {
     setMovieLoading(false);
   }
 }
 
 export async function searchMovies(
-  title,
-  genre,
-  minDuration,
-  maxDuration,
-  setMovies,
-  setMoviesLoading,
-) {
+  title: string,
+  genre: string,
+  minDuration: number | "",
+  maxDuration: number | "",
+  setMovies: (movies: Movie[]) => void,
+  setMoviesLoading: (loading: boolean) => void,
+): Promise<void> {
   setMoviesLoading(true);
 
   try {
     const response = await fetch(
-      `/api/movies/search?title=${encodeURIComponent(title)}&genre=${encodeURIComponent(genre)}&minDuration=${encodeURIComponent(minDuration)}&maxDuration=${encodeURIComponent(maxDuration)}`,
+      `/api/movies/search?title=${encodeURIComponent(title)}&genre=${encodeURIComponent(genre)}&minDuration=${encodeURIComponent(String(minDuration))}&maxDuration=${encodeURIComponent(String(maxDuration))}`,
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: Movie[] = await response.json();
     setMovies(data);
   } catch (error) {
     console.error("Error searching movies:", error);
@@ -60,7 +76,10 @@ export async function searchMovies(
   }
 }
 
-export async function fetchGenres(setGenres, setGenresLoading) {
+export async function fetchGenres(
+  setGenres: (genres: string[]) => void,
+  setGenresLoading: (loading: boolean) => void,
+): Promise<void> {
   setGenresLoading(true);
 
   try {
@@ -68,7 +87,7 @@ export async function fetchGenres(setGenres, setGenresLoading) {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: string[] = await response.json();
     setGenres(data);
   } catch (error) {
     console.error("Error fetching genres:", error);
@@ -80,10 +99,10 @@ export async function fetchGenres(setGenres, setGenresLoading) {
 //* Screening requests
 
 export async function fetchScreeningsForMovie(
-  movieId,
-  setScreenings,
-  setScreeningsLoading,
-) {
+  movieId: number,
+  setScreenings: ScreeningsSetter,
+  setScreeningsLoading: (loading: boolean) => void,
+): Promise<void> {
   setScreeningsLoading(true);
 
   try {
@@ -91,7 +110,7 @@ export async function fetchScreeningsForMovie(
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: Screening[] = await response.json();
     setScreenings(data);
   } catch (error) {
     console.error("Error fetching screenings:", error);
@@ -101,23 +120,23 @@ export async function fetchScreeningsForMovie(
 }
 
 export async function fetchScreeningFromScreeningId(
-  screeningId,
-  setScreening,
-  setScreeningLoading,
-) {
+  screeningId: string,
+  setScreening: ScreeningSetter,
+  setScreeningLoading: (loading: boolean) => void,
+): Promise<Screening> {
   setScreeningLoading(true);
   try {
     const response = await fetch(`/api/screenings/screening/${screeningId}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
+    const data: Screening = await response.json();
     setScreening(data);
 
     return data; // Return the fetched screening data for further use
   } catch (error) {
     console.error("Error fetching screening:", error);
-    throw new Error("Failed to load screening.");
+    throw new Error("Failed to load screening.", { cause: error });
   } finally {
     setScreeningLoading(false);
   }
@@ -126,11 +145,11 @@ export async function fetchScreeningFromScreeningId(
 //* Room requests
 
 export async function fetchRoom(
-  roomId,
-  setRowLabels,
-  setSeatNumbers,
-  setRoomLoading,
-) {
+  roomId: number,
+  setRowLabels: (labels: string[]) => void,
+  setSeatNumbers: (numbers: number[]) => void,
+  setRoomLoading: (loading: boolean) => void,
+): Promise<Room> {
   setRoomLoading(true);
   try {
     const response = await fetch(`/api/rooms/${roomId}`);
@@ -138,7 +157,7 @@ export async function fetchRoom(
       throw new Error("Failed to load room.");
     }
 
-    const data = await response.json();
+    const data: Room = await response.json();
 
     const rowLabels = Array.from({ length: data.row_count }, (_, index) =>
       String.fromCharCode(65 + index),
@@ -155,7 +174,7 @@ export async function fetchRoom(
     return data; // Return the fetched room data for further use
   } catch (error) {
     console.error("Error fetching room info:", error);
-    throw new Error("Failed to load room.");
+    throw new Error("Failed to load room.", { cause: error });
   } finally {
     setRoomLoading(false);
   }
@@ -164,10 +183,10 @@ export async function fetchRoom(
 //* Booking requests
 
 export async function fetchTakenSeats(
-  screeningId,
-  setTakenSeats,
-  setTakenSeatsLoading,
-) {
+  screeningId: number,
+  setTakenSeats: SeatSetter,
+  setTakenSeatsLoading: (loading: boolean) => void,
+): Promise<SeatMap> {
   setTakenSeatsLoading(true);
   try {
     const response = await fetch(`/api/bookings/${screeningId}`);
@@ -181,22 +200,22 @@ export async function fetchTakenSeats(
     return takenSeats; // Return the fetched taken seats for further use
   } catch (error) {
     console.error("Error fetching taken seats:", error);
-    throw new Error("Failed to load taken seats.");
+    throw new Error("Failed to load taken seats.", { cause: error });
   } finally {
     setTakenSeatsLoading(false);
   }
 }
 
 export async function confirmReservation(
-  screeningId,
-  customerName,
-  selectedSeats,
-  setSelectedSeats,
-  close,
-  setTakenSeats,
-  setReservationLoading,
-  setReservationError,
-) {
+  screeningId: number,
+  customerName: string,
+  selectedSeats: SeatMap,
+  setSelectedSeats: SeatSetter,
+  close: () => void,
+  setTakenSeats: SeatSetter,
+  setReservationLoading: (loading: boolean) => void,
+  setReservationError: (error: string) => void,
+): Promise<void> {
   setReservationLoading(true);
   setReservationError("");
 
@@ -236,9 +255,11 @@ export async function confirmReservation(
     // Clear the selected seats after booking
     setSelectedSeats({});
     close();
-  } catch (error) {
+  } catch (error: unknown) {
     setReservationError(
-      error.message || "An error occurred while confirming the reservation.",
+      error instanceof Error
+        ? error.message
+        : "An error occurred while confirming the reservation.",
     );
   } finally {
     setReservationLoading(false);

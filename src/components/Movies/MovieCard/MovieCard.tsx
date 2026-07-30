@@ -1,6 +1,9 @@
 import "./movie_card.scss";
+import type { Movie } from "../../../types/movie";
 
-const calculateDuration = (duration_minutes) => {
+const calculateDuration: (duration_minutes: number) => string = (
+  duration_minutes: number,
+) => {
   const hours = Math.floor(duration_minutes / 60);
   const minutes = duration_minutes % 60;
 
@@ -8,14 +11,16 @@ const calculateDuration = (duration_minutes) => {
 };
 
 const MovieCard = ({
-  title,
-  genre,
-  poster_path,
-  duration_minutes,
-  onClick,
+  movie,
+  selectMovie,
+}: {
+  movie: Movie;
+  selectMovie: () => void;
 }) => {
+  const { title, genre, poster_path, duration_minutes } = movie;
+
   return (
-    <button className="movie-card" type="button" onClick={onClick}>
+    <button className="movie-card" type="button" onClick={selectMovie}>
       <img className="movie-poster" src={poster_path} alt={title} />
       <h1 className="movie-card-title">{title}</h1>
       <p className="movie-genre">{genre}</p>

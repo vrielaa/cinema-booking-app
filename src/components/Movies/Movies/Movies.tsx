@@ -4,16 +4,24 @@ import MovieFilters from "../MovieFilters/MovieFilters";
 import "./movies.scss";
 import Modal from "../../Screenings/ScreeningsModal/ScreeningsModal";
 import { fetchScreeningsForMovie } from "../../../utils/fetchFunctions";
+import type { Movie } from "../../../types/movie";
+import type { Screening } from "../../../types/screening";
 
 function Movies() {
-  const [movies, setMovies] = useState([]);
-  const [screenings, setScreenings] = useState([]);
-  const [focusedMovie, setFocusedMovie] = useState(null);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [screenings, setScreenings] = useState<Screening[]>([]);
+  const [focusedMovie, setFocusedMovie] = useState<Movie | null>(null);
   const [moviesLoading, setMoviesLoading] = useState(true);
   const [screeningsLoading, setScreeningsLoading] = useState(false);
 
-  function openScreeningsModal(movieId) {
+  function openScreeningsModal(movieId: number) {
     const movie = movies.find((m) => m.id === movieId);
+
+    if (!movie) {
+      console.error(`Movie with ID ${movieId} not found.`);
+
+      return;
+    }
     setFocusedMovie(movie);
     setScreenings([]);
     setScreeningsLoading(true);
@@ -36,22 +44,15 @@ function Movies() {
         movies.map((movie) => (
           <MovieCard
             key={movie.id}
-            title={movie.title}
-            genre={movie.genre}
-            poster_path={movie.poster_path}
-            duration_minutes={movie.duration_minutes}
-            onClick={() => openScreeningsModal(movie.id)}
+            movie={movie}
+            selectMovie={() => openScreeningsModal(movie.id)}
           />
         ))
       )}
 
       {focusedMovie ? (
         <Modal
-          title={focusedMovie.title}
-          genre={focusedMovie.genre}
-          description={focusedMovie.description}
-          duration_minutes={focusedMovie.duration_minutes}
-          poster_path={focusedMovie.poster_path}
+          focusedMovie={focusedMovie}
           screenings={screenings}
           screeningsLoading={screeningsLoading}
           close={closeScreeningsModal}

@@ -6,7 +6,7 @@ import BookingHeading from "../BookingHeading/BookingHeading";
 import BookingSummary from "../BookingSummary/BookingSummary";
 import useBooking from "../../../hooks/useBooking";
 
-export default function Booking({ screeningId }) {
+export default function Booking({ screeningId }: { screeningId: string }) {
   const {
     bookingError,
     bookingLoading,
@@ -39,19 +39,22 @@ export default function Booking({ screeningId }) {
     );
   }
 
+  if (!screening || !movie || !rowLabels || !seatNumbers) {
+    return (
+      <section className="booking-error" role="alert">
+        <p className="booking-error-message">
+          Booking data is incomplete. Please try again later.
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section className="booking-page">
       <BookingHeading />
 
       <div className="booking-layout">
-        <BookingMovieCard
-          src={movie?.poster_path}
-          title={movie?.title}
-          genre={movie?.genre}
-          date={screening?.screening_date}
-          time={screening?.screening_time}
-          roomId={screening?.room_id}
-        />
+        <BookingMovieCard movie={movie} screening={screening} />
         <div className="booking-seats-card">
           <div className="booking-screen-area">
             <div className="booking-screen"></div>
@@ -72,7 +75,6 @@ export default function Booking({ screeningId }) {
             isAnySeatSelected={isAnySeatSelected}
             selectedSeats={selectedSeats}
             cost={cost}
-            movie={movie}
             screening={screening}
             setSelectedSeats={setSelectedSeats}
             setTakenSeats={setTakenSeats}

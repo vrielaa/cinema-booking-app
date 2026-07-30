@@ -1,37 +1,41 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import "./screenings_modal.scss";
 import ScreeningsTable from "../ScreeningsTable/ScreeningsTable";
 import ScreeningsMovieInfo from "../ScreeningsMovieInfo/ScreeningsMovieInfo";
+import type { Movie } from "../../../types/movie";
+import type { Screening } from "../../../types/screening";
 
 const Modal = ({
-  title,
-  genre,
-  description,
-  duration_minutes,
-  poster_path,
+  focusedMovie,
   screenings,
   screeningsLoading,
   close,
+}: {
+  focusedMovie: Movie;
+  screenings: Screening[];
+  screeningsLoading: boolean;
+  close: () => void;
 }) => {
-  const modalRef = useRef(null);
-
-  if (!modalRef.current) {
-    modalRef.current = document.createElement("div");
-  }
+  const [modalElement] = useState(() => document.createElement("div"));
 
   useEffect(() => {
     const modalRoot = document.getElementById("modal");
-    modalRoot.appendChild(modalRef.current);
+
+    if (!modalRoot) {
+      return;
+    }
+
+    modalRoot.appendChild(modalElement);
     document.body.classList.add("modal-open");
 
     return () => {
-      modalRoot.removeChild(modalRef.current);
+      modalRoot.removeChild(modalElement);
       document.body.classList.remove("modal-open");
     };
-  }, []);
+  }, [modalElement]);
 
-  function handleOverlayClick(event) {
+  function handleOverlayClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
       close();
     }
@@ -48,13 +52,7 @@ const Modal = ({
         >
           X
         </button>
-        <ScreeningsMovieInfo
-          title={title}
-          genre={genre}
-          description={description}
-          duration_minutes={duration_minutes}
-          poster_path={poster_path}
-        />
+        <ScreeningsMovieInfo movie={focusedMovie} />
 
         <div className="screenings-info">
           <>
@@ -68,7 +66,7 @@ const Modal = ({
       </div>
     </div>,
 
-    modalRef.current,
+    modalElement,
   );
 };
 

@@ -1,7 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import "./screenings_table.scss";
+import type { Screening } from "../../../types/screening";
 
-export default function ScreeningsTable({ screenings, screeningsLoading }) {
+export default function ScreeningsTable({
+  screenings,
+  screeningsLoading,
+}: {
+  screenings: Screening[];
+  screeningsLoading: boolean;
+}) {
   return (
     <table className="screenings-table">
       <thead>
@@ -16,7 +23,7 @@ export default function ScreeningsTable({ screenings, screeningsLoading }) {
       <tbody className="screenings-table-body">
         {screeningsLoading ? (
           <tr>
-            <td colSpan="5" className="screenings-loading">
+            <td colSpan={5} className="screenings-loading">
               Loading screenings...
             </td>
           </tr>

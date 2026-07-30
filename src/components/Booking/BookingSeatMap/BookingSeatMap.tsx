@@ -1,5 +1,6 @@
 import "./booking_seat_map.scss";
 import BookingSeat from "../BookingSeat/BookingSeat";
+import type { SeatMap, SeatSetter } from "../../../types/booking";
 
 export default function BookingSeatMap({
   rowLabels,
@@ -7,6 +8,12 @@ export default function BookingSeatMap({
   setSelectedSeats,
   selectedSeats,
   takenSeats,
+}: {
+  rowLabels: string[];
+  seatNumbers: number[];
+  setSelectedSeats: SeatSetter;
+  selectedSeats: SeatMap;
+  takenSeats: SeatMap;
 }) {
   return (
     <div className="booking-seat-map">

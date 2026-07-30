@@ -1,39 +1,47 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import "./booking_reserve_modal.scss";
 import { confirmReservation } from "../../../utils/fetchFunctions";
+import type { Screening } from "../../../types/screening";
+import type { SeatMap } from "../../../types/booking";
+import type { SeatSetter } from "../../../types/booking";
+
 const Modal = ({
-  screeningId,
-  title,
-  date,
-  time,
-  roomId,
+  screening,
   selectedSeats,
   setSelectedSeats,
   setTakenSeats,
   close,
+}: {
+  screening: Screening;
+  selectedSeats: SeatMap;
+  setSelectedSeats: SeatSetter;
+  setTakenSeats: SeatSetter;
+  close: () => void;
 }) => {
   const [customerName, setCustomerName] = useState("");
   const [reservationLoading, setReservationLoading] = useState(false);
   const [reservationError, setReservationError] = useState("");
-  const modalRef = useRef(null);
 
-  if (!modalRef.current) {
-    modalRef.current = document.createElement("div");
-  }
+  const [modalElement] = useState(() => document.createElement("div"));
 
   useEffect(() => {
     const modalRoot = document.getElementById("modal");
-    modalRoot.appendChild(modalRef.current);
+
+    if (!modalRoot) {
+      return;
+    }
+
+    modalRoot.appendChild(modalElement);
     document.body.classList.add("modal-open");
 
     return () => {
-      modalRoot.removeChild(modalRef.current);
+      modalRoot.removeChild(modalElement);
       document.body.classList.remove("modal-open");
     };
-  }, []);
+  }, [modalElement]);
 
-  function handleOverlayClick(event) {
+  function handleOverlayClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
       close();
     }
@@ -53,16 +61,16 @@ const Modal = ({
 
         <h2 className="booking-reserve-title">Confirm Reservation</h2>
         <p className="booking-reserve-info">
-          Movie: <strong>{title}</strong>
+          Movie: <strong>{screening.movie_title}</strong>
         </p>
         <p className="booking-reserve-info">
-          Date: <strong>{date}</strong>
+          Date: <strong>{screening.screening_date}</strong>
         </p>
         <p className="booking-reserve-info">
-          Time: <strong>{time}</strong>
+          Time: <strong>{screening.screening_time}</strong>
         </p>
         <p className="booking-reserve-info">
-          Room: <strong> {roomId}</strong>
+          Room: <strong> {screening.room_id}</strong>
         </p>
         <p className="booking-reserve-info">
           Seats:{" "}
@@ -97,7 +105,7 @@ const Modal = ({
             }
             onClick={() => {
               confirmReservation(
-                screeningId,
+                screening.id,
                 customerName,
                 selectedSeats,
                 setSelectedSeats,
@@ -114,7 +122,7 @@ const Modal = ({
       </div>
     </div>,
 
-    modalRef.current,
+    modalElement,
   );
 };
 
