@@ -6,7 +6,7 @@ export const Route = createLazyFileRoute("/booking/$screeningId")({
 });
 
 function BookingPage() {
-  const { screeningId } = Route.useParams();
+  const { screeningId } = Route.useParams(); // Get the screeningId from the route parameters
 
   return <Booking screeningId={screeningId} />;
 }
