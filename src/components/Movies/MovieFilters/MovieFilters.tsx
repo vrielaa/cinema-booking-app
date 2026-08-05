@@ -2,7 +2,7 @@ import "./movie_filters.scss";
 import { useState, useEffect } from "react";
 import { searchMovies, fetchGenres } from "../../../utils/fetchFunctions";
 import useDebounce from "../../../hooks/useDebounce";
-import type { DurationRanges, Movie } from "../../../types/movie";
+import type { Movie, DurationRanges } from "../../../types/movie";
 
 export default function MovieFilters({
   setMoviesLoading,
