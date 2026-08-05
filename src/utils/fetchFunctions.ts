@@ -211,14 +211,10 @@ export async function confirmReservation(
   customerName: string,
   selectedSeats: SeatMap,
   setSelectedSeats: SeatSetter,
-  close: () => void,
   setTakenSeats: SeatSetter,
   setReservationLoading: (loading: boolean) => void,
   setReservationError: (error: string) => void,
 ): Promise<void> {
-  setReservationLoading(true);
-  setReservationError("");
-
   try {
     const response = await fetch("/api/bookings", {
       method: "POST",
@@ -235,6 +231,7 @@ export async function confirmReservation(
     if (response.status === 409) {
       const errorData = await response.json();
 
+      // If there's a conflict, fetch the latest taken seats and update the state
       await fetchTakenSeats(screeningId, setTakenSeats, setReservationLoading);
       setSelectedSeats({});
       setReservationError(errorData.error);
@@ -254,7 +251,6 @@ export async function confirmReservation(
 
     // Clear the selected seats after booking
     setSelectedSeats({});
-    close();
   } catch (error: unknown) {
     setReservationError(
       error instanceof Error

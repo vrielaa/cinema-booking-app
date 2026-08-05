@@ -1,5 +1,5 @@
 import { useLocation } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useOptimistic } from "react";
 import {
   fetchMovie,
   fetchRoom,
@@ -35,6 +35,17 @@ export default function useBooking(screeningId: string) {
   const [takenSeats, setTakenSeats] = useState<SeatMap>({});
   const [takenSeatsLoading, setTakenSeatsLoading] = useState(true);
   const [bookingError, setBookingError] = useState("");
+
+  const [reservationLoading, setReservationLoading] = useState(false);
+  const [reservationError, setReservationError] = useState("");
+
+  const [optimisticTakenSeats, addOptimisticTakenSeats] = useOptimistic<
+    SeatMap,
+    SeatMap
+  >(takenSeats, (currentTakenSeats, newTakenSeats) => ({
+    ...currentTakenSeats,
+    ...newTakenSeats,
+  }));
 
   const selectedSeatsCount = Object.keys(selectedSeats).length;
   const isAnySeatSelected = selectedSeatsCount > 0;
@@ -100,6 +111,10 @@ export default function useBooking(screeningId: string) {
   return {
     bookingError,
     bookingLoading,
+    reservationError,
+    setReservationError,
+    reservationLoading,
+    setReservationLoading,
     cost,
     isAnySeatSelected,
     movie,
@@ -109,6 +124,8 @@ export default function useBooking(screeningId: string) {
     selectedSeats,
     setSelectedSeats,
     setTakenSeats,
+    optimisticTakenSeats,
+    addOptimisticTakenSeats,
     takenSeats,
   };
 }

@@ -69,6 +69,8 @@
 }
 
 .booking-seats-card {
+  position: relative;
+
   min-width: 0;
   padding: 3.2rem;
 
@@ -78,6 +80,59 @@
   box-shadow:
     0 1.8rem 4rem rgba(0, 0, 0, 0.4),
     0 0 1.8rem rgba(190, 145, 64, 0.12);
+}
+
+.booking-reservation-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+
+  border-radius: 0.6rem;
+  background-color: rgba(18, 19, 17, 0.58);
+  backdrop-filter: blur(0.1rem);
+}
+
+.booking-reservation-loading-spinner {
+  width: 4.8rem;
+  height: 4.8rem;
+
+  border: 0.4rem solid rgba(190, 145, 64, 0.25);
+  border-top-color: rgb(190, 145, 64);
+  border-radius: 50%;
+  animation: booking-reservation-loading-spin 0.8s linear infinite;
+}
+
+.booking-reservation-loading-text {
+  color: rgb(251, 229, 182);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+}
+
+@keyframes booking-reservation-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.booking-reservation-error {
+  margin-bottom: 2.4rem;
+  padding: 1.2rem 1.6rem;
+
+  border: 0.1rem solid rgb(180, 70, 60);
+  border-radius: 0.4rem;
+  background-color: rgba(180, 70, 60, 0.12);
+  color: rgb(255, 180, 170);
+  font-size: 1.4rem;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .booking-screen-area {

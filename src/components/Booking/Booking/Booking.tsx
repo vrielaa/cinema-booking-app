@@ -10,6 +10,10 @@ export default function Booking({ screeningId }: { screeningId: string }) {
   const {
     bookingError,
     bookingLoading,
+    reservationError,
+    setReservationError,
+    reservationLoading,
+    setReservationLoading,
     cost,
     isAnySeatSelected,
     movie,
@@ -19,7 +23,8 @@ export default function Booking({ screeningId }: { screeningId: string }) {
     selectedSeats,
     setSelectedSeats,
     setTakenSeats,
-    takenSeats,
+    optimisticTakenSeats,
+    addOptimisticTakenSeats,
   } = useBooking(screeningId);
 
   if (bookingLoading) {
@@ -56,6 +61,28 @@ export default function Booking({ screeningId }: { screeningId: string }) {
       <div className="booking-layout">
         <BookingMovieCard movie={movie} screening={screening} />
         <div className="booking-seats-card">
+          {reservationLoading ? (
+            <div
+              className="booking-reservation-loading-overlay"
+              role="status"
+              aria-live="polite"
+            >
+              <div
+                className="booking-reservation-loading-spinner"
+                aria-hidden="true"
+              />
+              <p className="booking-reservation-loading-text">
+                Reserving seats...
+              </p>
+            </div>
+          ) : null}
+
+          {reservationError ? (
+            <p className="booking-reservation-error" role="alert">
+              {reservationError}
+            </p>
+          ) : null}
+
           <div className="booking-screen-area">
             <div className="booking-screen"></div>
             <p className="booking-screen-label">Screen</p>
@@ -66,7 +93,7 @@ export default function Booking({ screeningId }: { screeningId: string }) {
             seatNumbers={seatNumbers}
             setSelectedSeats={setSelectedSeats}
             selectedSeats={selectedSeats}
-            takenSeats={takenSeats}
+            takenSeats={optimisticTakenSeats}
           />
 
           <BookingLegend />
@@ -78,6 +105,9 @@ export default function Booking({ screeningId }: { screeningId: string }) {
             screening={screening}
             setSelectedSeats={setSelectedSeats}
             setTakenSeats={setTakenSeats}
+            addOptimisticTakenSeats={addOptimisticTakenSeats}
+            setReservationLoading={setReservationLoading}
+            setReservationError={setReservationError}
           />
         </div>
       </div>

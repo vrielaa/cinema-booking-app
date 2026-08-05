@@ -1,4 +1,4 @@
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, startTransition, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import "./booking_reserve_modal.scss";
 import { confirmReservation } from "../../../utils/fetchFunctions";
@@ -11,17 +11,21 @@ const Modal = ({
   selectedSeats,
   setSelectedSeats,
   setTakenSeats,
-  close,
+  addOptimisticTakenSeats,
+  setReservationLoading,
+  setReservationError,
+  closeModal,
 }: {
   screening: Screening;
   selectedSeats: SeatMap;
   setSelectedSeats: SeatSetter;
   setTakenSeats: SeatSetter;
-  close: () => void;
+  addOptimisticTakenSeats: (newTakenSeats: SeatMap) => void;
+  setReservationError: (error: string) => void;
+  setReservationLoading: (loading: boolean) => void;
+  closeModal: () => void;
 }) => {
   const [customerName, setCustomerName] = useState("");
-  const [reservationLoading, setReservationLoading] = useState(false);
-  const [reservationError, setReservationError] = useState("");
 
   const [modalElement] = useState(() => document.createElement("div"));
 
@@ -41,9 +45,31 @@ const Modal = ({
     };
   }, [modalElement]);
 
+  async function reserveSeats() {
+    const seatsToReserve = { ...selectedSeats };
+
+    setReservationLoading(true);
+    setReservationError("");
+    closeModal();
+
+    startTransition(async () => {
+      addOptimisticTakenSeats(seatsToReserve);
+
+      await confirmReservation(
+        screening.id,
+        customerName,
+        seatsToReserve,
+        setSelectedSeats,
+        setTakenSeats,
+        setReservationLoading,
+        setReservationError,
+      );
+    });
+  }
+
   function handleOverlayClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
-      close();
+      closeModal();
     }
   }
 
@@ -53,7 +79,7 @@ const Modal = ({
         <button
           className="booking-reserve-close-button"
           type="button"
-          onClick={close}
+          onClick={closeModal}
           aria-label="Close modal"
         >
           X
@@ -82,11 +108,6 @@ const Modal = ({
         </p>
 
         <div className="booking-reserve-actions">
-          {reservationError ? (
-            <p className="booking-reserve-error" role="alert">
-              {reservationError}
-            </p>
-          ) : null}
           <input
             className="booking-reserve-name-input"
             type="text"
@@ -99,24 +120,11 @@ const Modal = ({
             className="booking-reserve-confirm-button"
             type="submit"
             disabled={
-              !customerName.trim() ||
-              reservationLoading ||
-              Object.keys(selectedSeats).length === 0
+              !customerName.trim() || Object.keys(selectedSeats).length === 0
             }
-            onClick={() => {
-              confirmReservation(
-                screening.id,
-                customerName,
-                selectedSeats,
-                setSelectedSeats,
-                close,
-                setTakenSeats,
-                setReservationLoading,
-                setReservationError,
-              );
-            }}
+            onClick={reserveSeats}
           >
-            {reservationLoading ? "Reserving..." : "Confirm Reservation"}
+            Confirm Reservation
           </button>
         </div>
       </div>
