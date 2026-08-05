@@ -9,12 +9,29 @@
 }
 
 .movies-loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  color: rgb(251, 229, 182);
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 24rem;
+}
+
+.movies-loading-spinner {
+  width: 4.8rem;
+  height: 4.8rem;
+
+  border: 0.4rem solid rgba(190, 145, 64, 0.25);
+  border-top-color: rgb(190, 145, 64);
+  border-radius: 50%;
+  animation: movies-loading-spin 0.8s linear infinite;
+}
+
+@keyframes movies-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 600px) {
@@ -28,8 +45,11 @@
   }
 
   .movies-loading {
-    width: calc(100% - 4rem);
-    font-size: 1.6rem;
-    text-align: center;
+    min-height: 18rem;
+  }
+
+  .movies-loading-spinner {
+    width: 4rem;
+    height: 4rem;
   }
 }

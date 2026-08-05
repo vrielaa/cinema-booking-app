@@ -39,7 +39,13 @@ function Movies() {
       <MovieFilters setMovies={setMovies} setMoviesLoading={setMoviesLoading} />
 
       {moviesLoading ? (
-        <p className="movies-loading">Loading movies...</p>
+        <div
+          className="movies-loading"
+          role="status"
+          aria-label="Loading movies"
+        >
+          <div className="movies-loading-spinner" aria-hidden="true" />
+        </div>
       ) : (
         movies.map((movie) => (
           <MovieCard

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/database.js";
+import { delay } from "../utils.js";
 
 export const bookingsRouter = Router();
 
@@ -30,8 +31,17 @@ export const bookingsRouter = Router();
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-bookingsRouter.post("/", (request, response) => {
+bookingsRouter.post("/", async (request, response) => {
   const { screeningId, customerName, seats } = request.body;
+
+  const bookingDelay =
+    process.env.NODE_ENV === "development"
+      ? Number(process.env.DELAY_MS ?? 0)
+      : 0;
+
+  if (bookingDelay > 0) {
+    await delay(bookingDelay);
+  }
 
   // check if the seats are already taken for the given screening
   const existingBookings = db

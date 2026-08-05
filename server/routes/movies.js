@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/database.js";
+import { delay } from "../utils.js";
 
 export const moviesRouter = Router();
 
@@ -20,7 +21,15 @@ export const moviesRouter = Router();
  *               items:
  *                 $ref: "#/components/schemas/Movie"
  */
-moviesRouter.get("/", (req, res) => {
+moviesRouter.get("/", async (req, res) => {
+  const movieResponseDelay =
+    process.env.NODE_ENV === "development"
+      ? Number(process.env.DELAY_MS ?? 0)
+      : 0;
+
+  if (movieResponseDelay > 0) {
+    await delay(movieResponseDelay);
+  }
   const movies = db.prepare("SELECT * FROM movies").all();
   res.json(movies);
 });
@@ -70,7 +79,16 @@ moviesRouter.get("/", (req, res) => {
  *               items:
  *                 $ref: "#/components/schemas/Movie"
  */
-moviesRouter.get("/search", (req, res) => {
+moviesRouter.get("/search", async (req, res) => {
+  const movieResponseDelay =
+    process.env.NODE_ENV === "development"
+      ? Number(process.env.DELAY_MS ?? 0)
+      : 0;
+
+  if (movieResponseDelay > 0) {
+    await delay(movieResponseDelay);
+  }
+
   const title = req.query.title || "";
   const genre = req.query.genre || "all";
   const minDuration = req.query.minDuration;
