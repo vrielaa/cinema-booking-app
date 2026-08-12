@@ -11,5 +11,10 @@ export default defineConfig({
       },
     },
   },
-  plugins: [tanstackRouter(), react()],
+  plugins: [
+    tanstackRouter({
+      routeFileIgnorePattern: "\\.test\\.",
+    }),
+    react(),
+  ],
 });

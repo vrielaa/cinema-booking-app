@@ -54,6 +54,23 @@ export default function useBooking(screeningId: string) {
     screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
 
   useEffect(() => {
+    function getScreeningFromLocation(
+      screeningFromState: Screening,
+    ): Screening {
+      setScreening(screeningFromState);
+      setScreeningLoading(false);
+
+      return screeningFromState;
+    }
+
+    async function getScreeningFromFetch(): Promise<Screening> {
+      return fetchScreeningFromScreeningId(
+        screeningId,
+        setScreening,
+        setScreeningLoading,
+      );
+    }
+
     async function loadBooking() {
       setBookingError("");
       setScreeningLoading(true);
@@ -66,18 +83,12 @@ export default function useBooking(screeningId: string) {
           screeningFromState &&
           String(screeningFromState.id) === String(screeningId);
 
-        let screeningData;
+        let screeningData: Screening;
 
         if (stateMatchesUrl) {
-          screeningData = screeningFromState;
-          setScreening(screeningData);
-          setScreeningLoading(false);
+          screeningData = getScreeningFromLocation(screeningFromState);
         } else {
-          screeningData = await fetchScreeningFromScreeningId(
-            screeningId,
-            setScreening,
-            setScreeningLoading,
-          );
+          screeningData = await getScreeningFromFetch();
         }
 
         await Promise.all([

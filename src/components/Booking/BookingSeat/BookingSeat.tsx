@@ -9,8 +9,8 @@ export default function BookingSeat({
   takenSeats,
 }: BookingSeatProps) {
   const seatId = `${rowLabel}${seatNumber}`;
-  const isSelected = Boolean(selectedSeats[seatId]);
   const isTaken = Boolean(takenSeats[seatId]);
+  const isSelected = !isTaken && Boolean(selectedSeats[seatId]);
   const seatStatus = isTaken ? "taken" : isSelected ? "selected" : "available";
 
   const toggleSeatSelection = () => {
