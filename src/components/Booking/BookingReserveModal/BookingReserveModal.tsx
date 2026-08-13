@@ -55,15 +55,18 @@ const Modal = ({
     startTransition(async () => {
       addOptimisticTakenSeats(seatsToReserve);
 
-      await confirmReservation(
-        screening.id,
-        customerName,
-        seatsToReserve,
-        setSelectedSeats,
-        setTakenSeats,
-        setReservationLoading,
-        setReservationError,
-      );
+      try {
+        await confirmReservation(
+          screening.id,
+          customerName,
+          seatsToReserve,
+          setSelectedSeats,
+          setTakenSeats,
+          setReservationError,
+        );
+      } finally {
+        setReservationLoading(false);
+      }
     });
   }
 

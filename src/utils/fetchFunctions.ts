@@ -142,6 +142,16 @@ export async function fetchScreeningFromScreeningId(
   }
 }
 
+async function requestTakenSeats(screeningId: number): Promise<SeatMap> {
+  const response = await fetch(`/api/bookings/${screeningId}`);
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  return response.json();
+}
+
 //* Room requests
 
 export async function fetchRoom(
@@ -189,12 +199,7 @@ export async function fetchTakenSeats(
 ): Promise<SeatMap> {
   setTakenSeatsLoading(true);
   try {
-    const response = await fetch(`/api/bookings/${screeningId}`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const takenSeats = await response.json();
+    const takenSeats = await requestTakenSeats(screeningId);
     setTakenSeats(takenSeats);
 
     return takenSeats; // Return the fetched taken seats for further use
@@ -212,7 +217,6 @@ export async function confirmReservation(
   selectedSeats: SeatMap,
   setSelectedSeats: SeatSetter,
   setTakenSeats: SeatSetter,
-  setReservationLoading: (loading: boolean) => void,
   setReservationError: (error: string) => void,
 ): Promise<void> {
   try {
@@ -232,7 +236,8 @@ export async function confirmReservation(
       const errorData = await response.json();
 
       // If there's a conflict, fetch the latest taken seats and update the state
-      await fetchTakenSeats(screeningId, setTakenSeats, setReservationLoading);
+      const latestTakenSeats = await requestTakenSeats(screeningId);
+      setTakenSeats(latestTakenSeats);
       setSelectedSeats({});
       setReservationError(errorData.error);
 
@@ -257,7 +262,5 @@ export async function confirmReservation(
         ? error.message
         : "An error occurred while confirming the reservation.",
     );
-  } finally {
-    setReservationLoading(false);
   }
 }

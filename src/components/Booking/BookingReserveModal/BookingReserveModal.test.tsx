@@ -163,10 +163,10 @@ describe("BookingReserveModal", () => {
       },
       setSelectedSeats,
       setTakenSeats,
-      setReservationLoading,
       setReservationError,
     );
-    expect(setReservationLoading).toHaveBeenCalledWith(true);
+    expect(setReservationLoading).toHaveBeenNthCalledWith(1, true);
+    expect(setReservationLoading).toHaveBeenNthCalledWith(2, false);
     expect(addOptimisticTakenSeats).toHaveBeenCalledWith({ A1: true });
     expect(closeModal).toHaveBeenCalled();
   });
