@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { expect, it, vi, describe } from "vitest";
+import userEvent from "@testing-library/user-event";
 import MovieCard from "./MovieCard";
 import type { Movie } from "../../../types/movie";
 
@@ -41,5 +42,15 @@ describe("MovieCard", () => {
       "alt",
       movie.title,
     );
+  });
+
+  it("should call selectMovie when the movie card is clicked", async () => {
+    const selectMovie = vi.fn();
+    const user = userEvent.setup();
+    render(<MovieCard movie={movie} selectMovie={selectMovie} />);
+
+    await user.click(screen.getByRole("button", { name: /Test Movie/ }));
+
+    expect(selectMovie).toHaveBeenCalledOnce();
   });
 });
