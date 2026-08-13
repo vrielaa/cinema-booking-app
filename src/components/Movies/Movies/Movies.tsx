@@ -3,7 +3,7 @@ import MovieCard from "../MovieCard/MovieCard";
 import MovieFilters from "../MovieFilters/MovieFilters";
 import "./movies.scss";
 import Modal from "../../Screenings/ScreeningsModal/ScreeningsModal";
-import { fetchScreeningsForMovie } from "../../../utils/fetchFunctions";
+import { fetchScreeningsForMovie } from "../../../api";
 import type { Movie } from "../../../types/movie";
 import type { Screening } from "../../../types/screening";
 

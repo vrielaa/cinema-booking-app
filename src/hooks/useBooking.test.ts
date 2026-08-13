@@ -8,7 +8,7 @@ import {
   fetchRoom,
   fetchScreeningFromScreeningId,
   fetchTakenSeats,
-} from "../utils/fetchFunctions";
+} from "../api";
 import type { Room } from "../types/room";
 import type { Movie } from "../types/movie";
 
@@ -25,7 +25,7 @@ vi.mock("@tanstack/react-router", () => ({
   useLocation: useLocationMock,
 }));
 
-vi.mock("../utils/fetchFunctions", () => ({
+vi.mock("../api", () => ({
   fetchMovie: vi.fn(),
   fetchRoom: vi.fn(),
   fetchScreeningFromScreeningId: vi.fn(),

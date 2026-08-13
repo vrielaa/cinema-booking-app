@@ -4,9 +4,9 @@ import BookingReserveModal from "./BookingReserveModal";
 import type { SeatMap, SeatSetter } from "../../../types/booking";
 import type { Screening } from "../../../types/screening";
 import userEvent from "@testing-library/user-event";
-import { confirmReservation } from "../../../utils/fetchFunctions";
+import { confirmReservation } from "../../../api";
 
-vi.mock("../../../utils/fetchFunctions", () => ({
+vi.mock("../../../api", () => ({
   confirmReservation: vi.fn(),
 }));
 

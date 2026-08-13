@@ -1,7 +1,7 @@
 import { useEffect, startTransition, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import "./booking_reserve_modal.scss";
-import { confirmReservation } from "../../../utils/fetchFunctions";
+import { confirmReservation } from "../../../api";
 import type { Screening } from "../../../types/screening";
 import type { SeatMap } from "../../../types/booking";
 import type { SeatSetter } from "../../../types/booking";

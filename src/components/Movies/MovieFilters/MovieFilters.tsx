@@ -1,6 +1,6 @@
 import "./movie_filters.scss";
 import { useState, useEffect } from "react";
-import { searchMovies, fetchGenres } from "../../../utils/fetchFunctions";
+import { searchMovies, fetchGenres } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import type { Movie, DurationRanges } from "../../../types/movie";
 

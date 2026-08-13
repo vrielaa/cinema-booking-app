@@ -5,7 +5,7 @@ import {
   fetchRoom,
   fetchScreeningFromScreeningId,
   fetchTakenSeats,
-} from "../utils/fetchFunctions";
+} from "../api";
 import type { Movie } from "../types/movie";
 import type { Screening } from "../types/screening";
 import type { SeatMap } from "../types/booking";
