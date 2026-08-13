@@ -27,6 +27,19 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+function createJsonResponse<T>(
+  data: T,
+  status = 200,
+  statusText = "",
+): Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    statusText,
+    json: async () => data,
+  } as Response;
+}
+
 //ROOM
 const room: Room = {
   id: 1,
@@ -40,17 +53,6 @@ const setRoomLoading = vi.fn();
 
 const rowLabels = ["A", "B", "C"];
 const seatNumbers = [1, 2, 3, 4, 5];
-
-const okRoomResponse = {
-  ok: true,
-  json: async () => room,
-} as Response;
-
-const errorRoomResponse = {
-  ok: false,
-  status: 404,
-  statusText: "Not Found",
-} as Response;
 
 //SCREENING
 
@@ -68,19 +70,7 @@ const screening: Screening = {
   movie_title: "Test Movie",
 };
 
-const okScreeningResponse = {
-  ok: true,
-  json: async () => screening,
-} as Response;
-
-const errorScreeningResponse = {
-  ok: false,
-  status: 404,
-  statusText: "Not Found",
-} as Response;
-
 //MOVIE
-
 const setMovie = vi.fn();
 const setMovieLoading = vi.fn();
 
@@ -92,17 +82,6 @@ const movie: Movie = {
   description: "A test movie for unit testing.",
   poster_path: "/path/to/poster.jpg",
 };
-
-const okMovieResponse = {
-  ok: true,
-  json: async () => movie,
-} as Response;
-
-const errorMovieResponse = {
-  ok: false,
-  status: 404,
-  statusText: "Not Found",
-} as Response;
 
 //MOVIES
 
@@ -128,17 +107,6 @@ const moviesResponse: Movie[] = [
   },
 ];
 
-const okMoviesResponse = {
-  ok: true,
-  json: async () => moviesResponse,
-} as Response;
-
-const errorMoviesResponse = {
-  ok: false,
-  status: 404,
-  statusText: "Not Found",
-} as Response;
-
 // TAKEN SEATS
 
 const setTakenSeats = vi.fn();
@@ -149,17 +117,6 @@ const takenSeatsResult: SeatMap = {
   B3: true,
 };
 
-const okTakenSeatsResponse = {
-  ok: true,
-  json: async () => takenSeatsResult,
-} as Response;
-
-const errorTakenSeatsResponse = {
-  ok: false,
-  status: 404,
-  statusText: "Not Found",
-} as Response;
-
 // RESERVATION
 const screeningId = 1;
 const customerName = "John Doe";
@@ -167,30 +124,9 @@ const selectedSeats: SeatMap = { A1: true, B1: true };
 const setSelectedSeats = vi.fn();
 const setReservationError = vi.fn();
 
-const okReservationResponse = {
-  ok: true,
-  json: async () => ({}),
-} as Response;
-
-const conflictReservationResponse = {
-  ok: false,
-  status: 409,
-  json: async () => ({
-    error: "Some seats are already taken.",
-  }),
-} as Response;
-
-const errorReservationResponse = {
-  ok: false,
-  status: 500,
-  statusText: "Internal Server Error",
-} as Response;
-
-//GENRES
-
 describe("fetchRoom", () => {
   it("should request the room from /api/rooms/1", async () => {
-    fetchMock.mockResolvedValueOnce(okRoomResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(room));
 
     await fetchRoom(1, setRowLabels, setSeatNumbers, setRoomLoading);
 
@@ -198,7 +134,7 @@ describe("fetchRoom", () => {
   });
 
   it("should set loading to true before the request and false after it finishes", async () => {
-    fetchMock.mockResolvedValueOnce(okRoomResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(room));
 
     await fetchRoom(1, setRowLabels, setSeatNumbers, setRoomLoading);
 
@@ -208,7 +144,7 @@ describe("fetchRoom", () => {
   });
 
   it("should create row labels and seat numbers from the fetched room", async () => {
-    fetchMock.mockResolvedValueOnce(okRoomResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(room));
 
     await fetchRoom(1, setRowLabels, setSeatNumbers, setRoomLoading);
 
@@ -217,7 +153,7 @@ describe("fetchRoom", () => {
   });
 
   it("should return the fetched room", async () => {
-    fetchMock.mockResolvedValueOnce(okRoomResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(room));
 
     const result = await fetchRoom(
       1,
@@ -230,7 +166,7 @@ describe("fetchRoom", () => {
   });
 
   it("should throw and avoid updating room data when the response is not ok", async () => {
-    fetchMock.mockResolvedValueOnce(errorRoomResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await expect(
       fetchRoom(1, setRowLabels, setSeatNumbers, setRoomLoading),
@@ -246,7 +182,7 @@ describe("fetchRoom", () => {
 
 describe("fetchMovie", () => {
   it("should request the movie from /api/movies/1", async () => {
-    fetchMock.mockResolvedValueOnce(okMovieResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(movie));
 
     await fetchMovie(1, setMovie, setMovieLoading);
 
@@ -254,7 +190,7 @@ describe("fetchMovie", () => {
   });
 
   it("should store the movie and finish loading after a successful response", async () => {
-    fetchMock.mockResolvedValueOnce(okMovieResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(movie));
 
     await fetchMovie(1, setMovie, setMovieLoading);
 
@@ -265,7 +201,7 @@ describe("fetchMovie", () => {
   });
 
   it("should throw and avoid updating the movie when the response is not ok", async () => {
-    fetchMock.mockResolvedValueOnce(errorMovieResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await expect(fetchMovie(1, setMovie, setMovieLoading)).rejects.toThrow(
       "Failed to load movie.",
@@ -280,7 +216,7 @@ describe("fetchMovie", () => {
 
 describe("fetchTakenSeats", () => {
   it("should request taken seats from /api/bookings/1", async () => {
-    fetchMock.mockResolvedValueOnce(okTakenSeatsResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(takenSeatsResult));
 
     await fetchTakenSeats(1, setTakenSeats, setTakenSeatsLoading);
 
@@ -288,7 +224,7 @@ describe("fetchTakenSeats", () => {
   });
 
   it("should store and return taken seats after a successful response", async () => {
-    fetchMock.mockResolvedValueOnce(okTakenSeatsResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(takenSeatsResult));
 
     const result = await fetchTakenSeats(
       1,
@@ -305,7 +241,7 @@ describe("fetchTakenSeats", () => {
   });
 
   it("should throw and avoid updating taken seats when the response is not ok", async () => {
-    fetchMock.mockResolvedValueOnce(errorTakenSeatsResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await expect(
       fetchTakenSeats(1, setTakenSeats, setTakenSeatsLoading),
@@ -320,7 +256,7 @@ describe("fetchTakenSeats", () => {
 
 describe("fetchScreeningFromScreeningId", () => {
   it("should request the screening from /api/screenings/screening/1", async () => {
-    fetchMock.mockResolvedValueOnce(okScreeningResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(screening));
 
     await fetchScreeningFromScreeningId("1", setScreening, setScreeningLoading);
 
@@ -328,7 +264,7 @@ describe("fetchScreeningFromScreeningId", () => {
   });
 
   it("should store and return the screening after a successful response", async () => {
-    fetchMock.mockResolvedValueOnce(okScreeningResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(screening));
 
     const result = await fetchScreeningFromScreeningId(
       "1",
@@ -344,7 +280,7 @@ describe("fetchScreeningFromScreeningId", () => {
   });
 
   it("should throw and avoid updating the screening when the response is not ok", async () => {
-    fetchMock.mockResolvedValueOnce(errorScreeningResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await expect(
       fetchScreeningFromScreeningId("1", setScreening, setScreeningLoading),
@@ -359,7 +295,7 @@ describe("fetchScreeningFromScreeningId", () => {
 
 describe("confirmReservation", () => {
   it("should post the reservation to /api/bookings with the correct payload", async () => {
-    fetchMock.mockResolvedValueOnce(okReservationResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, 200));
 
     await confirmReservation(
       screeningId,
@@ -384,7 +320,7 @@ describe("confirmReservation", () => {
   });
 
   it("should update taken and selected seats after a successful response", async () => {
-    fetchMock.mockResolvedValueOnce(okReservationResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, 200));
 
     await confirmReservation(
       screeningId,
@@ -400,7 +336,7 @@ describe("confirmReservation", () => {
   });
 
   it("should preserve previously taken seats when adding reserved seats", async () => {
-    fetchMock.mockResolvedValueOnce(okReservationResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, 200));
 
     const previouslyTakenSeats: SeatMap = { C1: true };
     const newSelectedSeats: SeatMap = { A1: true, B1: true };
@@ -437,7 +373,7 @@ describe("confirmReservation", () => {
   });
 
   it("should clear selected seats after a successful reservation", async () => {
-    fetchMock.mockResolvedValueOnce(okReservationResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, 200));
 
     await confirmReservation(
       screeningId,
@@ -452,7 +388,7 @@ describe("confirmReservation", () => {
   });
 
   it("should not set an error after a successful reservation", async () => {
-    fetchMock.mockResolvedValueOnce(okReservationResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, 200));
 
     await confirmReservation(
       screeningId,
@@ -468,8 +404,10 @@ describe("confirmReservation", () => {
 
   it("should refresh taken seats and report an error after a 409 conflict", async () => {
     fetchMock
-      .mockResolvedValueOnce(conflictReservationResponse)
-      .mockResolvedValueOnce(okTakenSeatsResponse);
+      .mockResolvedValueOnce(
+        createJsonResponse({ error: "Some seats are already taken." }, 409),
+      )
+      .mockResolvedValueOnce(createJsonResponse(takenSeatsResult));
 
     await confirmReservation(
       screeningId,
@@ -503,7 +441,9 @@ describe("confirmReservation", () => {
   });
 
   it("should report an error when the response is not ok", async () => {
-    fetchMock.mockResolvedValueOnce(errorReservationResponse);
+    fetchMock.mockResolvedValueOnce(
+      createJsonResponse(null, 500, "Internal Server Error"),
+    );
 
     await confirmReservation(
       screeningId,
@@ -543,7 +483,7 @@ describe("confirmReservation", () => {
 
 describe("fetchMovies", () => {
   it("should fetch movies, store them, and finish loading", async () => {
-    fetchMock.mockResolvedValueOnce(okMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
     await fetchMovies(setMovies, setMoviesLoading);
 
@@ -559,7 +499,7 @@ describe("fetchMovies", () => {
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
-    fetchMock.mockResolvedValueOnce(errorMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await fetchMovies(setMovies, setMoviesLoading);
 
@@ -596,7 +536,7 @@ describe("fetchMovies", () => {
 
 describe("searchMovies", () => {
   it("should request movies using the provided search parameters", async () => {
-    fetchMock.mockResolvedValueOnce(okMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
     await searchMovies("Test", "Action", 90, 150, setMovies, setMoviesLoading);
 
@@ -610,7 +550,7 @@ describe("searchMovies", () => {
   });
 
   it("should encode search parameters to handle special characters", async () => {
-    fetchMock.mockResolvedValueOnce(okMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
     await searchMovies(
       "Test Movie",
@@ -631,7 +571,7 @@ describe("searchMovies", () => {
   });
 
   it("should include empty duration parameters in the request", async () => {
-    fetchMock.mockResolvedValueOnce(okMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
     await searchMovies("Test", "Action", "", "", setMovies, setMoviesLoading);
 
@@ -649,7 +589,7 @@ describe("searchMovies", () => {
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
-    fetchMock.mockResolvedValueOnce(errorMoviesResponse);
+    fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
     await searchMovies("Test", "Action", 90, 150, setMovies, setMoviesLoading);
 
