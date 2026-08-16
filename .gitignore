@@ -3,6 +3,8 @@ node_modules/
 dist/
 .env
 coverage/
+playwright-report/
+test-results/
 .vscode/
 database.sqlite
 server/db/database.sqlite

@@ -13,7 +13,10 @@
     "lint:fix": "eslint --fix",
     "dev": "vite",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +24,7 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
     "@tanstack/eslint-plugin-query": "^5.59.7",
     "@tanstack/react-query-devtools": "^5.59.13",
     "@tanstack/react-router-devtools": "1.167.0",
