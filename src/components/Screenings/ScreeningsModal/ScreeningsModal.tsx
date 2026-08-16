@@ -43,7 +43,12 @@ const Modal = ({
 
   return createPortal(
     <div className="screenings-modal-overlay" onClick={handleOverlayClick}>
-      <div className="screenings-modal">
+      <div
+        className="screenings-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="screenings-modal-title"
+      >
         <button
           className="screenings-modal-close-button"
           type="button"
@@ -56,7 +61,9 @@ const Modal = ({
 
         <div className="screenings-info">
           <>
-            <h2 className="screenings-title">Screenings</h2>
+            <h2 className="screenings-title" id="screenings-modal-title">
+              Screenings
+            </h2>
             <ScreeningsTable
               screenings={screenings}
               screeningsLoading={screeningsLoading}
