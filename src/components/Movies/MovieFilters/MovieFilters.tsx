@@ -75,9 +75,10 @@ export default function MovieFilters({
       </div>
 
       <div className="movie-filters-controls">
-        <label className="movie-filter-field">
+        <label htmlFor="title-filter" className="movie-filter-field">
           <span className="movie-filter-label">Title</span>
           <input
+            id="title-filter"
             className="movie-filter-input"
             type="search"
             placeholder="Search by title"
@@ -86,9 +87,10 @@ export default function MovieFilters({
           />
         </label>
 
-        <label className="movie-filter-field">
+        <label htmlFor="genre-filter" className="movie-filter-field">
           <span className="movie-filter-label">Genre</span>
           <select
+            id="genre-filter"
             className="movie-filter-select"
             value={genreFilter}
             onChange={(event) => setGenreFilter(event.target.value)}
@@ -105,9 +107,10 @@ export default function MovieFilters({
           </select>
         </label>
 
-        <label className="movie-filter-field">
+        <label htmlFor="duration-filter" className="movie-filter-field">
           <span className="movie-filter-label">Duration</span>
           <select
+            id="duration-filter"
             className="movie-filter-select"
             value={durationFilter}
             onChange={(event) => setDurationFilter(event.target.value)}

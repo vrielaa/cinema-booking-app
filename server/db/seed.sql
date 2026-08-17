@@ -55,7 +55,7 @@ VALUES
   ('Harry Potter and the Sorcerer''s Stone', 'FANTASY', 'A fantasy story about a young wizard discovering a magical world.', 152, '/posters/harry-potter-and-the-sorcerer-s-stone.webp'),
   ('Fantastic Beasts and Where to Find Them', 'FANTASY', 'A fantasy adventure about magical creatures in New York.', 132, '/posters/fantastic-beasts-and-where-to-find-them.webp'),
   ('Pirates of the Caribbean: The Curse of the Black Pearl', 'ADVENTURE', 'An adventure movie about pirates, treasure, and a cursed ship.', 143, '/posters/pirates-of-the-caribbean-the-curse-of-the-black-pearl.webp'),
-  ('The Maze Runner', 'Dystopian', 'A dystopian thriller about teenagers trapped in a mysterious maze.', 113, '/posters/the-maze-runner.webp'),
+  ('The Maze Runner', 'DYSTOPIAN', 'A dystopian thriller about teenagers trapped in a mysterious maze.', 113, '/posters/the-maze-runner.webp'),
   ('Ready Player One', 'SCIENCE FICTION', 'A science fiction adventure set inside a virtual world.', 140, '/posters/ready-player-one.webp'),
   ('The Martian', 'SCIENCE FICTION', 'A science fiction drama about survival on Mars.', 144, '/posters/the-martian.webp');
 
