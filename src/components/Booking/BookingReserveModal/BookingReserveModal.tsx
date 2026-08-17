@@ -78,7 +78,12 @@ const Modal = ({
 
   return createPortal(
     <div className="booking-reserve-overlay" onClick={handleOverlayClick}>
-      <div className="booking-reserve-modal">
+      <div
+        className="booking-reserve-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-reserve-title"
+      >
         <button
           className="booking-reserve-close-button"
           type="button"
@@ -88,7 +93,9 @@ const Modal = ({
           X
         </button>
 
-        <h2 className="booking-reserve-title">Confirm Reservation</h2>
+        <h2 className="booking-reserve-title" id="booking-reserve-title">
+          Confirm Reservation
+        </h2>
         <p className="booking-reserve-info">
           Movie: <strong>{screening.movie_title}</strong>
         </p>
