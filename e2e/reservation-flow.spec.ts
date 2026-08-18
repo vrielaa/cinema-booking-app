@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures/booking.fixture.ts";
 
 test.describe("Reservation flow", () => {
   test("successfully reserves a seat", async ({ bookingPage }) => {
-    await bookingPage.route("**/api/bookings", async (route) => {
+    await bookingPage.page.route("**/api/bookings", async (route) => {
       if (route.request().method() !== "POST") {
         await route.continue();
 
@@ -18,11 +18,7 @@ test.describe("Reservation flow", () => {
       });
     });
 
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     const accessibleName = await availableSeat.getAttribute("aria-label");
     const seatId = accessibleName?.split(",")[0];
@@ -35,23 +31,15 @@ test.describe("Reservation flow", () => {
 
     await availableSeat.click();
 
-    const reserveSeatsButton = bookingPage.getByRole("button", {
-      name: "Reserve seats",
-    });
+    const reserveSeatsButton = bookingPage.reserveSeatsButton;
 
     await reserveSeatsButton.click();
 
-    await expect(
-      bookingPage.getByRole("dialog", {
-        name: "Confirm Reservation",
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.reservationDialog).toBeVisible();
 
-    const confirmReservationButton = bookingPage.getByRole("button", {
-      name: "Confirm Reservation",
-    });
+    const confirmReservationButton = bookingPage.confirmReservationButton;
 
-    const customerNameInput = bookingPage.getByRole("textbox");
+    const customerNameInput = bookingPage.customerNameInput;
 
     await expect(confirmReservationButton).toBeVisible();
     await expect(customerNameInput).toBeVisible();
@@ -61,7 +49,7 @@ test.describe("Reservation flow", () => {
     await customerNameInput.fill("name");
     await expect(confirmReservationButton).toBeEnabled();
 
-    const requestPromise = bookingPage.waitForRequest(
+    const requestPromise = bookingPage.page.waitForRequest(
       (request) =>
         request.url().includes("/api/bookings") && request.method() === "POST",
     );
@@ -78,15 +66,9 @@ test.describe("Reservation flow", () => {
       },
     });
 
-    await expect(
-      bookingPage.getByRole("dialog", {
-        name: "Confirm Reservation",
-      }),
-    ).not.toBeVisible();
+    await expect(bookingPage.confirmReservationButton).not.toBeVisible();
 
-    const takenSeat = bookingPage.getByRole("button", {
-      name: `${seatId}, taken`,
-    });
+    const takenSeat = bookingPage.takenSeat(seatId);
 
     await expect(takenSeat).toBeVisible();
   });
@@ -94,7 +76,7 @@ test.describe("Reservation flow", () => {
   test("shows an error when a selected seat was already reserved", async ({
     bookingPage,
   }) => {
-    await bookingPage.route("**/api/bookings", async (route) => {
+    await bookingPage.page.route("**/api/bookings", async (route) => {
       if (route.request().method() !== "POST") {
         await route.continue();
 
@@ -110,11 +92,7 @@ test.describe("Reservation flow", () => {
       });
     });
 
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     const accessibleName = await availableSeat.getAttribute("aria-label");
     const seatId = accessibleName?.split(",")[0];
@@ -123,7 +101,7 @@ test.describe("Reservation flow", () => {
       throw new Error("Expected the seat to have an accessible name");
     }
 
-    await bookingPage.route("**/api/bookings/1", async (route) => {
+    await bookingPage.page.route("**/api/bookings/1", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -137,23 +115,15 @@ test.describe("Reservation flow", () => {
 
     await availableSeat.click();
 
-    const reserveSeatsButton = bookingPage.getByRole("button", {
-      name: "Reserve seats",
-    });
+    const reserveSeatsButton = bookingPage.reserveSeatsButton;
 
     await reserveSeatsButton.click();
 
-    await expect(
-      bookingPage.getByRole("dialog", {
-        name: "Confirm Reservation",
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.reservationDialog).toBeVisible();
 
-    const confirmReservationButton = bookingPage.getByRole("button", {
-      name: "Confirm Reservation",
-    });
+    const confirmReservationButton = bookingPage.confirmReservationButton;
 
-    const customerNameInput = bookingPage.getByRole("textbox");
+    const customerNameInput = bookingPage.customerNameInput;
 
     await expect(confirmReservationButton).toBeVisible();
     await expect(customerNameInput).toBeVisible();
@@ -163,7 +133,7 @@ test.describe("Reservation flow", () => {
     await customerNameInput.fill("name");
     await expect(confirmReservationButton).toBeEnabled();
 
-    const requestPromise = bookingPage.waitForRequest(
+    const requestPromise = bookingPage.page.waitForRequest(
       (request) =>
         request.url().includes("/api/bookings") && request.method() === "POST",
     );
@@ -180,19 +150,13 @@ test.describe("Reservation flow", () => {
       },
     });
 
-    await expect(
-      bookingPage.getByRole("dialog", {
-        name: "Confirm Reservation",
-      }),
-    ).not.toBeVisible();
+    await expect(bookingPage.reservationDialog).not.toBeVisible();
 
-    await expect(bookingPage.getByRole("alert")).toHaveText(
+    await expect(bookingPage.reservationError).toHaveText(
       "Selected seat has already been reserved",
     );
 
-    const takenSeat = bookingPage.getByRole("button", {
-      name: `${seatId}, taken`,
-    });
+    const takenSeat = bookingPage.takenSeat(seatId);
 
     await expect(takenSeat).toBeVisible();
   });

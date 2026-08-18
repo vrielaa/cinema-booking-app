@@ -2,11 +2,7 @@ import { expect, test } from "./fixtures/booking.fixture.ts";
 
 test.describe("Seat selection", () => {
   test("selects an available seat", async ({ bookingPage }) => {
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /, available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     await expect(availableSeat).toBeVisible();
 
@@ -19,25 +15,16 @@ test.describe("Seat selection", () => {
 
     await availableSeat.click();
 
-    await expect(
-      bookingPage.getByRole("button", {
-        name: `${seatId}, selected`,
-      }),
-    ).toHaveAttribute("aria-pressed", "true");
+    await expect(bookingPage.selectedSeat(seatId)).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
-    await expect(
-      bookingPage.getByText("$10.00", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.price(10)).toBeVisible();
   });
 
   test("unselects an available seat", async ({ bookingPage }) => {
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /, available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     const accessibleName = await availableSeat.getAttribute("aria-label");
     const seatId = accessibleName?.split(",")[0];
@@ -47,43 +34,26 @@ test.describe("Seat selection", () => {
     }
     await availableSeat.click();
 
-    const selectedSeat = bookingPage.getByRole("button", {
-      name: `${seatId}, selected`,
-    });
+    const selectedSeat = bookingPage.selectedSeat(seatId);
 
-    await expect(
-      bookingPage.getByRole("button", {
-        name: `${seatId}, selected`,
-      }),
-    ).toHaveAttribute("aria-pressed", "true");
+    await expect(selectedSeat).toHaveAttribute("aria-pressed", "true");
 
-    await expect(
-      bookingPage.getByText("$10.00", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.price(10)).toBeVisible();
 
     await selectedSeat.click();
 
-    await expect(
-      bookingPage.getByRole("button", {
-        name: `${seatId}, available`,
-      }),
-    ).toHaveAttribute("aria-pressed", "false");
+    await expect(bookingPage.availableSeatById(seatId)).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
 
-    await expect(
-      bookingPage.getByText("$0.00", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.price(0)).toBeVisible();
   });
 
   test("selecting two seats should set the cost to $20.00", async ({
     bookingPage,
   }) => {
-    const availableSeats = bookingPage.getByRole("button", {
-      name: /, available$/,
-    });
+    const availableSeats = bookingPage.availableSeats;
 
     const seat1 = availableSeats.first();
     const seat2 = availableSeats.nth(1);
@@ -94,68 +64,38 @@ test.describe("Seat selection", () => {
     await seat1.click();
     await seat2.click();
 
-    await expect(
-      bookingPage.getByText("$20.00", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.price(20)).toBeVisible();
   });
 
   test("reserve seats button is initially disabled", async ({
     bookingPage,
   }) => {
-    await expect(
-      bookingPage.getByText("$0.00", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.price(0)).toBeVisible();
 
-    await expect(
-      bookingPage.getByRole("button", {
-        name: "Reserve seats",
-      }),
-    ).toBeDisabled();
+    await expect(bookingPage.reserveSeatsButton).toBeDisabled();
   });
 
   test("reserve seats button is enabled after selecting a seat", async ({
     bookingPage,
   }) => {
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /, available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     await availableSeat.click();
 
-    await expect(
-      bookingPage.getByRole("button", {
-        name: "Reserve seats",
-      }),
-    ).toBeEnabled();
+    await expect(bookingPage.reserveSeatsButton).toBeEnabled();
   });
 
   test("opens reservation modal after clicking reserve seats button", async ({
     bookingPage,
   }) => {
-    const availableSeat = bookingPage
-      .getByRole("button", {
-        name: /, available$/,
-      })
-      .first();
+    const availableSeat = bookingPage.availableSeat;
 
     await availableSeat.click();
 
-    const reserveButton = bookingPage.getByRole("button", {
-      name: "Reserve seats",
-    });
+    const reserveButton = bookingPage.reserveSeatsButton;
 
     await reserveButton.click();
 
-    await expect(
-      bookingPage.getByRole("dialog", {
-        name: "Confirm Reservation",
-      }),
-    ).toBeVisible();
+    await expect(bookingPage.confirmReservationButton).toBeVisible();
   });
 });
