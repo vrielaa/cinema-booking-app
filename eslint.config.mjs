@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint";
 /** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config(
   {
-    ignores: ["dist/**", "src/routeTree.gen.ts"],
+    ignores: ["dist/**", "coverage/**", "src/routeTree.gen.ts"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
