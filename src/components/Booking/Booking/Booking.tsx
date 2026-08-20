@@ -25,6 +25,7 @@ export default function Booking({ screeningId }: { screeningId: string }) {
     setTakenSeats,
     optimisticTakenSeats,
     addOptimisticTakenSeats,
+    handleBookingError,
   } = useBooking(screeningId);
 
   if (bookingLoading) {
@@ -108,6 +109,7 @@ export default function Booking({ screeningId }: { screeningId: string }) {
             addOptimisticTakenSeats={addOptimisticTakenSeats}
             setReservationLoading={setReservationLoading}
             setReservationError={setReservationError}
+            handleBookingError={handleBookingError}
           />
         </div>
       </div>

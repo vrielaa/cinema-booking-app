@@ -23,11 +23,22 @@ CREATE TABLE IF NOT EXISTS screenings (
   FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 
+CREATE TABLE IF NOT EXISTS users  (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'customer',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS bookings (
   id INTEGER PRIMARY KEY,
   screening_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
   customer_name TEXT NOT NULL,
   seats TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (screening_id) REFERENCES screenings(id)
+  FOREIGN KEY (screening_id) REFERENCES screenings(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );

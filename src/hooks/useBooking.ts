@@ -1,5 +1,7 @@
-import { useLocation } from "@tanstack/react-router";
-import { useEffect, useState, useOptimistic } from "react";
+import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState, useOptimistic, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
+import { UnauthorizedError } from "../api/errors";
 import {
   fetchMovie,
   fetchRoom,
@@ -13,6 +15,8 @@ import type { SeatMap } from "../types/booking";
 const seatPrice = 10;
 
 export default function useBooking(screeningId: string) {
+  const navigate = useNavigate();
+  const { setIsAuthenticated } = useAuth();
   const screeningFromState = useLocation({
     select: (location) => location.state?.screening,
   });
@@ -52,6 +56,28 @@ export default function useBooking(screeningId: string) {
   const cost = selectedSeatsCount * seatPrice;
   const bookingLoading =
     screeningLoading || movieLoading || roomLoading || takenSeatsLoading;
+
+  const handleBookingError = useCallback(
+    (error: unknown) => {
+      if (error instanceof UnauthorizedError) {
+        setIsAuthenticated(false);
+
+        navigate({
+          to: "/login",
+          search: {
+            redirect: `/booking/${screeningId}`,
+          },
+        });
+
+        return;
+      }
+
+      setBookingError(
+        error instanceof Error ? error.message : "An unknown error occurred.",
+      );
+    },
+    [navigate, screeningId, setIsAuthenticated],
+  );
 
   useEffect(() => {
     function getScreeningFromLocation(
@@ -110,14 +136,12 @@ export default function useBooking(screeningId: string) {
         setRoomLoading(false);
         setMovieLoading(false);
         setTakenSeatsLoading(false);
-        setBookingError(
-          error instanceof Error ? error.message : "An unknown error occurred",
-        );
+        handleBookingError(error);
       }
     }
 
     loadBooking();
-  }, [screeningId, screeningFromState]);
+  }, [screeningId, screeningFromState, handleBookingError]);
 
   return {
     bookingError,
@@ -138,5 +162,6 @@ export default function useBooking(screeningId: string) {
     optimisticTakenSeats,
     addOptimisticTakenSeats,
     takenSeats,
+    handleBookingError,
   };
 }

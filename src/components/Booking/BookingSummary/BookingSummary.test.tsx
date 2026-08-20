@@ -11,6 +11,7 @@ describe("BookingSummary", () => {
   const addOptimisticTakenSeats = vi.fn();
   const setReservationLoading = vi.fn();
   const setReservationError = vi.fn();
+  const handleBookingError = vi.fn();
 
   const screening: Screening = {
     id: 1,
@@ -43,6 +44,7 @@ describe("BookingSummary", () => {
         addOptimisticTakenSeats={addOptimisticTakenSeats}
         setReservationLoading={setReservationLoading}
         setReservationError={setReservationError}
+        handleBookingError={handleBookingError}
       />,
     );
   }

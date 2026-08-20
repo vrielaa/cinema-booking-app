@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../db/database.js";
 import { delay } from "../utils.js";
+import { requireAuth } from "./auth.js";
 
 export const bookingsRouter = Router();
 
@@ -31,8 +32,8 @@ export const bookingsRouter = Router();
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-bookingsRouter.post("/", async (request, response) => {
-  const { screeningId, customerName, seats } = request.body;
+bookingsRouter.post("/", requireAuth, async (request, response) => {
+  const { screeningId, seats } = request.body;
 
   const bookingDelay =
     process.env.NODE_ENV === "development"
@@ -41,6 +42,25 @@ bookingsRouter.post("/", async (request, response) => {
 
   if (bookingDelay > 0) {
     await delay(bookingDelay);
+  }
+
+  const user = db
+    .prepare("SELECT * FROM users WHERE id = ?")
+    .get(request.session.userId);
+
+  if (!user) {
+    return response.status(400).json({ error: "User not found." });
+  }
+
+  const customerName = user.name;
+
+  // Validate that the screening exists
+  const screening = db
+    .prepare("SELECT * FROM screenings WHERE id = ?")
+    .get(screeningId);
+
+  if (!screening) {
+    return response.status(400).json({ error: "Screening not found." });
   }
 
   // check if the seats are already taken for the given screening
@@ -65,11 +85,11 @@ bookingsRouter.post("/", async (request, response) => {
   const result = db
     .prepare(
       `
-      INSERT INTO bookings (screening_id, customer_name, seats)
-      VALUES (?, ?, ?)
+      INSERT INTO bookings (screening_id, customer_name, seats, user_id)
+      VALUES (?, ?, ?, ?)
       `,
     )
-    .run(screeningId, customerName, JSON.stringify(seats));
+    .run(screeningId, customerName, JSON.stringify(seats), user.id);
 
   response.status(201).json({
     id: result.lastInsertRowid,
@@ -102,7 +122,7 @@ bookingsRouter.post("/", async (request, response) => {
  *             schema:
  *               $ref: "#/components/schemas/SeatMap"
  */
-bookingsRouter.get("/:screeningId", (request, response) => {
+bookingsRouter.get("/:screeningId", requireAuth, (request, response) => {
   const { screeningId } = request.params;
 
   const bookings = db

@@ -17,6 +17,7 @@ describe("BookingReserveModal", () => {
   const setReservationLoading = vi.fn();
   const setReservationError = vi.fn();
   const closeModal = vi.fn();
+  const handleBookingError = vi.fn();
 
   const confirmReservationMock = vi.mocked(confirmReservation);
 
@@ -46,6 +47,7 @@ describe("BookingReserveModal", () => {
         setReservationLoading={setReservationLoading}
         setReservationError={setReservationError}
         closeModal={closeModal}
+        handleBookingError={handleBookingError}
       />,
     );
   }
@@ -87,14 +89,10 @@ describe("BookingReserveModal", () => {
   });
 
   it("should keep confirm button disabled when no seats are selected", async () => {
-    const user = userEvent.setup();
-
     renderBookingReserveModal({
       selectedSeats: {},
     });
 
-    await user.type(screen.getByPlaceholderText("Enter your name"), "John Doe");
-
     expect(
       screen.getByRole("button", {
         name: "Confirm Reservation",
@@ -102,53 +100,19 @@ describe("BookingReserveModal", () => {
     ).toBeDisabled();
   });
 
-  it("should keep confirm button disabled when name contains only spaces", async () => {
-    const user = userEvent.setup();
-
-    renderBookingReserveModal({
-      selectedSeats: {
-        A1: true,
-      },
-    });
-
-    await user.type(screen.getByPlaceholderText("Enter your name"), "   ");
-
-    expect(
-      screen.getByRole("button", {
-        name: "Confirm Reservation",
-      }),
-    ).toBeDisabled();
-  });
-
-  it("should disable confirm button when user name is not provided and seats are selected", () => {
+  it("should enable confirm button when seats are selected", () => {
     renderBookingReserveModal({ selectedSeats: { A1: true } });
 
     const confirmButton = screen.getByRole("button", {
       name: "Confirm Reservation",
     });
-    expect(confirmButton).toBeDisabled();
-  });
-
-  it("should enable confirm button when user name is provided and seats are selected", async () => {
-    const user = userEvent.setup();
-    renderBookingReserveModal({ selectedSeats: { A1: true } });
-
-    const confirmButton = screen.getByRole("button", {
-      name: "Confirm Reservation",
-    });
-    expect(confirmButton).toBeDisabled();
-    const nameInput = screen.getByPlaceholderText("Enter your name");
-    await user.type(nameInput, "John Doe");
 
     expect(confirmButton).toBeEnabled();
   });
 
-  it("should call reserveSeats and closeModal when confirm button is clicked with valid input", async () => {
+  it("should call reserveSeats and closeModal when confirm button is clicked", async () => {
     const user = userEvent.setup();
     renderBookingReserveModal({ selectedSeats: { A1: true } });
-
-    const nameInput = screen.getByPlaceholderText("Enter your name");
-    await user.type(nameInput, "John Doe");
 
     const confirmButton = screen.getByRole("button", {
       name: "Confirm Reservation",
@@ -157,7 +121,6 @@ describe("BookingReserveModal", () => {
 
     expect(confirmReservationMock).toHaveBeenCalledWith(
       screening.id,
-      "John Doe",
       {
         A1: true,
       },

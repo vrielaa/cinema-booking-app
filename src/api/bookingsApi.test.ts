@@ -26,7 +26,6 @@ const takenSeatsResult: SeatMap = {
 
 // RESERVATION
 const screeningId = 1;
-const customerName = "John Doe";
 const selectedSeats: SeatMap = { A1: true, B1: true };
 const setSelectedSeats = vi.fn();
 const setReservationError = vi.fn();
@@ -76,7 +75,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -90,7 +88,6 @@ describe("confirmReservation", () => {
       },
       body: JSON.stringify({
         screeningId,
-        customerName,
         seats: selectedSeats,
       }),
     });
@@ -101,7 +98,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -120,7 +116,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       newSelectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -154,7 +149,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -169,7 +163,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -188,7 +181,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -202,7 +194,6 @@ describe("confirmReservation", () => {
       },
       body: JSON.stringify({
         screeningId,
-        customerName,
         seats: selectedSeats,
       }),
     });
@@ -222,7 +213,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,
@@ -241,7 +231,6 @@ describe("confirmReservation", () => {
 
     await confirmReservation(
       screeningId,
-      customerName,
       selectedSeats,
       setSelectedSeats,
       setTakenSeats,

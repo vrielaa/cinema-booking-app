@@ -39,14 +39,7 @@ test.describe("Reservation flow", () => {
 
     const confirmReservationButton = bookingPage.confirmReservationButton;
 
-    const customerNameInput = bookingPage.customerNameInput;
-
     await expect(confirmReservationButton).toBeVisible();
-    await expect(customerNameInput).toBeVisible();
-
-    await expect(confirmReservationButton).toBeDisabled();
-
-    await customerNameInput.fill("name");
     await expect(confirmReservationButton).toBeEnabled();
 
     const requestPromise = bookingPage.page.waitForRequest(
@@ -60,7 +53,6 @@ test.describe("Reservation flow", () => {
 
     expect(request.postDataJSON()).toEqual({
       screeningId: 1,
-      customerName: "name",
       seats: {
         [seatId]: true,
       },
@@ -118,14 +110,7 @@ test.describe("Reservation flow", () => {
     await expect(bookingPage.reservationDialog).toBeVisible();
 
     const confirmReservationButton = bookingPage.confirmReservationButton;
-    const customerNameInput = bookingPage.customerNameInput;
-
     await expect(confirmReservationButton).toBeVisible();
-    await expect(customerNameInput).toBeVisible();
-
-    await expect(confirmReservationButton).toBeDisabled();
-
-    await customerNameInput.fill("name");
     await expect(confirmReservationButton).toBeEnabled();
 
     const requestPromise = bookingPage.page.waitForRequest(
@@ -148,7 +133,6 @@ test.describe("Reservation flow", () => {
 
     expect(request.postDataJSON()).toEqual({
       screeningId: 1,
-      customerName: "name",
       seats: {
         [seatId]: true,
       },
@@ -199,8 +183,6 @@ test.describe("Reservation flow", () => {
     await bookingPage.openReservationModal();
 
     await expect(bookingPage.reservationDialog).toBeVisible();
-
-    await bookingPage.enterCustomerName("Gabriela");
 
     await expect(bookingPage.confirmReservationButton).toBeEnabled();
 

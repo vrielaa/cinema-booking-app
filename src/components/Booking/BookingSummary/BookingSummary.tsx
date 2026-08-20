@@ -14,6 +14,7 @@ export default function BookingSummary({
   addOptimisticTakenSeats,
   setReservationLoading,
   setReservationError,
+  handleBookingError,
 }: {
   isAnySeatSelected: boolean;
   selectedSeats: SeatMap;
@@ -24,6 +25,7 @@ export default function BookingSummary({
   addOptimisticTakenSeats: (newTakenSeats: SeatMap) => void;
   setReservationLoading: (loading: boolean) => void;
   setReservationError: (error: string) => void;
+  handleBookingError: (error: unknown) => void;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -60,6 +62,7 @@ export default function BookingSummary({
           setReservationLoading={setReservationLoading}
           setReservationError={setReservationError}
           closeModal={() => setIsModalOpen(false)}
+          handleBookingError={handleBookingError}
         />
       ) : null}
     </div>

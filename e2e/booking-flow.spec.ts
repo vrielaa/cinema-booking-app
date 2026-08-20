@@ -1,12 +1,12 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/booking.fixture.ts";
 
 test.describe("Booking flow", () => {
   test("should move to booking page when a screening for a movie is selected", async ({
-    page,
+    bookingPage,
   }) => {
-    await page.goto("/");
+    await bookingPage.page.goto("/");
 
-    const duneMovieCard = page.getByRole("button", {
+    const duneMovieCard = bookingPage.page.getByRole("button", {
       name: /Dune: Part Two/,
     });
 
@@ -14,10 +14,10 @@ test.describe("Booking flow", () => {
 
     await duneMovieCard.click();
 
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.getByRole("table")).toBeVisible();
+    await expect(bookingPage.page.getByRole("dialog")).toBeVisible();
+    await expect(bookingPage.page.getByRole("table")).toBeVisible();
 
-    const selectScreeningLinks = page.getByRole("link", {
+    const selectScreeningLinks = bookingPage.page.getByRole("link", {
       name: "Select",
     });
 
@@ -27,29 +27,29 @@ test.describe("Booking flow", () => {
 
     await firstScreeningLink.click();
 
-    await expect(page).toHaveURL("/booking/1");
+    await expect(bookingPage.page).toHaveURL("/booking/1");
   });
 
-  test("should load booking page correctly", async ({ page }) => {
-    await page.goto("/booking/1");
-    await expect(page).toHaveURL("/booking/1");
+  test("should load booking page correctly", async ({ bookingPage }) => {
+    await bookingPage.page.goto("/booking/1");
+    await expect(bookingPage.page).toHaveURL("/booking/1");
 
     await expect(
-      page.getByRole("heading", {
+      bookingPage.page.getByRole("heading", {
         name: "Choose your seats",
         level: 1,
       }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("heading", {
+      bookingPage.page.getByRole("heading", {
         name: "Dune: Part Two",
         level: 2,
       }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("button", {
+      bookingPage.page.getByRole("button", {
         name: /A1, (available|taken)/,
       }),
     ).toBeVisible();

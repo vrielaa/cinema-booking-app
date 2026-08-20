@@ -9,13 +9,9 @@ export const CreateBookingResponse = {
       type: "integer",
       example: 3,
     },
-    customerName: {
-      type: "string",
-      example: "Gabriela",
-    },
     seats: {
       $ref: "#/components/schemas/SeatMap",
     },
   },
-  required: ["id", "screeningId", "customerName", "seats"],
+  required: ["id", "screeningId", "seats"],
 };

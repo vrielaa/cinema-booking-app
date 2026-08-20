@@ -5,13 +5,9 @@ export const CreateBookingRequest = {
       type: "integer",
       example: 1,
     },
-    customerName: {
-      type: "string",
-      example: "Gabriela",
-    },
     seats: {
       $ref: "#/components/schemas/SeatMap",
     },
   },
-  required: ["screeningId", "customerName", "seats"],
+  required: ["screeningId", "seats"],
 };

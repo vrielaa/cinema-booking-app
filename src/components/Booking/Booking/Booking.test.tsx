@@ -51,6 +51,7 @@ describe("Booking component", () => {
     optimisticTakenSeats: { B2: true },
     addOptimisticTakenSeats: vi.fn(),
     takenSeats: { B2: true },
+    handleBookingError: vi.fn(),
   };
 
   it("should pass screeningId to useBooking hook", () => {

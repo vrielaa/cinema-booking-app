@@ -15,6 +15,7 @@ const Modal = ({
   setReservationLoading,
   setReservationError,
   closeModal,
+  handleBookingError,
 }: {
   screening: Screening;
   selectedSeats: SeatMap;
@@ -24,9 +25,8 @@ const Modal = ({
   setReservationError: (error: string) => void;
   setReservationLoading: (loading: boolean) => void;
   closeModal: () => void;
+  handleBookingError: (error: unknown) => void;
 }) => {
-  const [customerName, setCustomerName] = useState("");
-
   const [modalElement] = useState(() => document.createElement("div"));
 
   useEffect(() => {
@@ -58,12 +58,13 @@ const Modal = ({
       try {
         await confirmReservation(
           screening.id,
-          customerName,
           seatsToReserve,
           setSelectedSeats,
           setTakenSeats,
           setReservationError,
         );
+      } catch (error) {
+        handleBookingError(error);
       } finally {
         setReservationLoading(false);
       }
@@ -118,20 +119,10 @@ const Modal = ({
         </p>
 
         <div className="booking-reserve-actions">
-          <input
-            className="booking-reserve-name-input"
-            type="text"
-            placeholder="Enter your name"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-          />
-
           <button
             className="booking-reserve-confirm-button"
             type="submit"
-            disabled={
-              !customerName.trim() || Object.keys(selectedSeats).length === 0
-            }
+            disabled={Object.keys(selectedSeats).length === 0}
             onClick={reserveSeats}
           >
             Confirm Reservation

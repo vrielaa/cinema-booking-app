@@ -1,7 +1,11 @@
 import type { SeatMap, SeatSetter } from "../types/booking";
+import { UnauthorizedError } from "./errors";
 
 async function requestTakenSeats(screeningId: number): Promise<SeatMap> {
   const response = await fetch(`/api/bookings/${screeningId}`);
+  if (response.status === 401) {
+    throw new UnauthorizedError();
+  }
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -22,6 +26,9 @@ export async function fetchTakenSeats(
 
     return takenSeats; // Return the fetched taken seats for further use
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      throw error; // Rethrow the UnauthorizedError to be handled by the caller
+    }
     console.error("Error fetching taken seats:", error);
     throw new Error("Failed to load taken seats.", { cause: error });
   } finally {
@@ -31,7 +38,6 @@ export async function fetchTakenSeats(
 
 export async function confirmReservation(
   screeningId: number,
-  customerName: string,
   selectedSeats: SeatMap,
   setSelectedSeats: SeatSetter,
   setTakenSeats: SeatSetter,
@@ -45,10 +51,13 @@ export async function confirmReservation(
       },
       body: JSON.stringify({
         screeningId,
-        customerName,
         seats: selectedSeats,
       }),
     });
+
+    if (response.status === 401) {
+      throw new UnauthorizedError();
+    }
 
     if (response.status === 409) {
       const errorData = await response.json();
@@ -75,6 +84,9 @@ export async function confirmReservation(
     // Clear the selected seats after booking
     setSelectedSeats({});
   } catch (error: unknown) {
+    if (error instanceof UnauthorizedError) {
+      throw error;
+    }
     setReservationError(
       error instanceof Error
         ? error.message

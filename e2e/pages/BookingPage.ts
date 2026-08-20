@@ -33,10 +33,6 @@ export class BookingPage {
     });
   }
 
-  get customerNameInput() {
-    return this.reservationDialog.getByRole("textbox");
-  }
-
   get reservationError() {
     return this.page.getByRole("alert");
   }
@@ -85,7 +81,4 @@ export class BookingPage {
     await this.reserveSeatsButton.click();
   }
 
-  async enterCustomerName(name: string) {
-    await this.customerNameInput.fill(name);
-  }
 }

@@ -1,11 +1,18 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/booking.fixture.ts";
 
-test("shows an error when booking data cannot be loaded", async ({ page }) => {
-  await page.route("**/api/screenings/screening/1", async (route) => {
-    await route.abort();
-  });
+test("shows an error when booking data cannot be loaded", async ({
+  bookingPage,
+}) => {
+  await bookingPage.page.route(
+    "**/api/screenings/screening/1",
+    async (route) => {
+      await route.abort();
+    },
+  );
 
-  await page.goto("/booking/1");
+  await bookingPage.page.goto("/booking/1");
 
-  await expect(page.getByRole("alert")).toHaveText("Failed to load screening.");
+  await expect(bookingPage.page.getByRole("alert")).toHaveText(
+    "Failed to load screening.",
+  );
 });

@@ -11,24 +11,34 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as BookingScreeningIdRouteImport } from './routes/booking.$screeningId'
 
 const IndexLazyRouteImport = createFileRoute('/')()
 const MoviesLazyRouteImport = createFileRoute('/movies')()
-const BookingScreeningIdLazyRouteImport = createFileRoute(
-  '/booking/$screeningId',
-)()
 
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
 const MoviesLazyRoute = MoviesLazyRouteImport.update({
   id: '/movies',
   path: '/movies',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/movies.lazy').then((d) => d.Route))
-const BookingScreeningIdLazyRoute = BookingScreeningIdLazyRouteImport.update({
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+const BookingScreeningIdRoute = BookingScreeningIdRouteImport.update({
   id: '/booking/$screeningId',
   path: '/booking/$screeningId',
   getParentRoute: () => rootRouteImport,
@@ -38,32 +48,46 @@ const BookingScreeningIdLazyRoute = BookingScreeningIdLazyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/movies': typeof MoviesLazyRoute
-  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/movies': typeof MoviesLazyRoute
-  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/movies': typeof MoviesLazyRoute
-  '/booking/$screeningId': typeof BookingScreeningIdLazyRoute
+  '/booking/$screeningId': typeof BookingScreeningIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies' | '/booking/$screeningId'
+  fullPaths: '/' | '/login' | '/register' | '/movies' | '/booking/$screeningId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies' | '/booking/$screeningId'
-  id: '__root__' | '/' | '/movies' | '/booking/$screeningId'
+  to: '/' | '/login' | '/register' | '/movies' | '/booking/$screeningId'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/movies'
+    | '/booking/$screeningId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   MoviesLazyRoute: typeof MoviesLazyRoute
-  BookingScreeningIdLazyRoute: typeof BookingScreeningIdLazyRoute
+  BookingScreeningIdRoute: typeof BookingScreeningIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,6 +99,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/movies': {
       id: '/movies'
       path: '/movies'
@@ -82,11 +113,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking/$screeningId': {
       id: '/booking/$screeningId'
       path: '/booking/$screeningId'
       fullPath: '/booking/$screeningId'
-      preLoaderRoute: typeof BookingScreeningIdLazyRouteImport
+      preLoaderRoute: typeof BookingScreeningIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -94,8 +132,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
   MoviesLazyRoute: MoviesLazyRoute,
-  BookingScreeningIdLazyRoute: BookingScreeningIdLazyRoute,
+  BookingScreeningIdRoute: BookingScreeningIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

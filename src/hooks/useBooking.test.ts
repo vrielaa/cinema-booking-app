@@ -1,6 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import useBooking from "./useBooking";
+import { UnauthorizedError } from "../api/errors";
 
 import type { Screening } from "../types/screening";
 import {
@@ -11,18 +12,21 @@ import {
 } from "../api";
 import type { Room } from "../types/room";
 import type { Movie } from "../types/movie";
+import { useAuth } from "../context/AuthContext";
 
 /* Mock the useLocation hook from @tanstack/react-router
  - vi.hoisted is used to hoist the mock implementation
  !to the top of the file,
  so that it is available before the useBooking hook is imported and used.
  */
-const { useLocationMock } = vi.hoisted(() => ({
+const { useLocationMock, navigateMock } = vi.hoisted(() => ({
   useLocationMock: vi.fn<(...args: unknown[]) => Screening | undefined>(),
+  navigateMock: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-router", () => ({
   useLocation: useLocationMock,
+  useNavigate: () => navigateMock,
 }));
 
 vi.mock("../api", () => ({
@@ -32,6 +36,12 @@ vi.mock("../api", () => ({
   fetchTakenSeats: vi.fn(),
 }));
 
+vi.mock("../context/AuthContext", () => ({
+  useAuth: vi.fn(),
+}));
+
+const setIsAuthenticatedMock = vi.fn();
+const useAuthMock = vi.mocked(useAuth);
 const fetchMovieMock = vi.mocked(fetchMovie);
 const fetchRoomMock = vi.mocked(fetchRoom);
 const fetchScreeningFromScreeningIdMock = vi.mocked(
@@ -120,6 +130,14 @@ describe("useBooking", () => {
     fetchRoomMock.mockReset();
     fetchScreeningFromScreeningIdMock.mockReset();
     fetchTakenSeatsMock.mockReset();
+    navigateMock.mockReset();
+    setIsAuthenticatedMock.mockReset();
+
+    useAuthMock.mockReturnValue({
+      isAuthenticated: false,
+      setIsAuthenticated: setIsAuthenticatedMock,
+      isLoading: false,
+    });
   });
 
   it("should have correct initial state before loading data", () => {
@@ -518,5 +536,32 @@ describe("useBooking", () => {
     );
 
     expect(result.current.screening).toEqual(secondScreening);
+  });
+
+  it("should throw UnauthorizedError during booking if user is not authenticated and handleBookingError should navigate to login page", async () => {
+    useAuthMock.mockReturnValue({
+      isAuthenticated: true,
+      setIsAuthenticated: setIsAuthenticatedMock,
+      isLoading: false,
+    });
+
+    useLocationMock.mockReturnValue(screening);
+    mockSuccessfulBookingDetailsFetches(true);
+
+    fetchTakenSeatsMock.mockReset();
+    fetchTakenSeatsMock.mockRejectedValueOnce(new UnauthorizedError());
+
+    renderHook(() => useBooking("1"));
+
+    await waitFor(() => {
+      expect(setIsAuthenticatedMock).toHaveBeenCalledWith(false);
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith({
+      to: "/login",
+      search: {
+        redirect: `/booking/1`,
+      },
+    });
   });
 });
