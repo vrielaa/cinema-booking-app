@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    env:
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
