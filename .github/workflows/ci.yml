@@ -47,3 +47,11 @@ jobs:
 
       - name: Run end-to-end tests
         run: npm run test:e2e
+
+      - name: Upload Playwright JSON report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-json-report
+          path: playwright-report.json
+          if-no-files-found: ignore

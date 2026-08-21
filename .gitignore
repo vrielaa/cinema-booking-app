@@ -4,6 +4,7 @@ dist/
 .env
 coverage/
 playwright-report/
+playwright-report.json
 test-results/
 .vscode/
 database.sqlite
