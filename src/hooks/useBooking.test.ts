@@ -63,8 +63,7 @@ const screening: Screening = {
 const movie: Movie = {
   id: 1,
   title: "Test Movie",
-  genre: "Action",
-  duration_minutes: 120,
+  genres: [{ id: 28, name: "Action" }],
   poster_path: "/path/to/poster.jpg",
   description: "Test movie description",
 };
@@ -484,8 +483,7 @@ describe("useBooking", () => {
     const secondMovie: Movie = {
       id: 2,
       title: "Second Movie",
-      genre: "Comedy",
-      duration_minutes: 90,
+      genres: [{ id: 35, name: "Comedy" }],
       poster_path: "/path/to/second_poster.jpg",
       description: "Second movie description",
     };

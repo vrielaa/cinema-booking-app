@@ -2,7 +2,7 @@ import "./screenings_movie_info.scss";
 import type { Movie } from "../../../types/movie";
 
 export default function ScreeningsMovieInfo({ movie }: { movie: Movie }) {
-  const { title, genre, description, duration_minutes, poster_path } = movie;
+  const { title, genres, description, poster_path } = movie;
 
   return (
     <>
@@ -16,11 +16,9 @@ export default function ScreeningsMovieInfo({ movie }: { movie: Movie }) {
 
       <div className="screenings-movie-info">
         <h1 className="screenings-movie-title">{title}</h1>
-        <p className="screenings-movie-duration">
-          Duration: {Math.floor(duration_minutes / 60)}h {duration_minutes % 60}
-          m
+        <p className="screenings-movie-genre">
+          {genres.map((genre) => genre.name).join(", ")}
         </p>
-        <p className="screenings-movie-genre">{genre}</p>
         <p className="screenings-movie-description">{description}</p>
       </div>
     </>

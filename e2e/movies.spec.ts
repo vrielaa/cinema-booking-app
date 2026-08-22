@@ -61,27 +61,6 @@ test.describe("Movie catalogue", () => {
     await expect(duneMovieCard).toHaveCount(0);
   });
 
-  test("filters movies by duration", async ({ page }) => {
-    const durationFilterSelect = page.getByRole("combobox", {
-      name: "Duration",
-    });
-
-    const duneMovieCard = page.getByRole("button", {
-      name: /Dune: Part Two/,
-    });
-
-    await expect(duneMovieCard).toBeVisible();
-
-    await durationFilterSelect.selectOption("under-100");
-
-    const insideOutMovieCard = page.getByRole("button", {
-      name: /Inside Out 2/,
-    });
-    await expect(insideOutMovieCard).toBeVisible();
-
-    await expect(duneMovieCard).toHaveCount(0);
-  });
-
   test("clears filters", async ({ page }) => {
     const duneMovieCard = page.getByRole("button", {
       name: /Dune: Part Two/,
@@ -97,21 +76,15 @@ test.describe("Movie catalogue", () => {
       name: "Genre",
     });
 
-    const durationFilterSelect = page.getByRole("combobox", {
-      name: "Duration",
-    });
-
     const clearFiltersButton = page.getByRole("button", {
       name: "Clear",
     });
 
     await titleFilterInput.fill("Batman");
     await genreFilterSelect.selectOption("ACTION");
-    await durationFilterSelect.selectOption("under-100");
 
     await expect(titleFilterInput).toHaveValue("Batman");
     await expect(genreFilterSelect).toHaveValue("ACTION");
-    await expect(durationFilterSelect).toHaveValue("under-100");
 
     await expect(duneMovieCard).toHaveCount(0);
 
@@ -119,7 +92,6 @@ test.describe("Movie catalogue", () => {
 
     await expect(titleFilterInput).toHaveValue("");
     await expect(genreFilterSelect).toHaveValue("all");
-    await expect(durationFilterSelect).toHaveValue("all");
     await expect(duneMovieCard).toBeVisible();
   });
 

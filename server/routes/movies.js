@@ -55,20 +55,6 @@ moviesRouter.get("/", async (req, res) => {
  *           type: string
  *         description: Movie genre. Use all or omit the parameter to include every genre.
  *         example: Crime
- *       - in: query
- *         name: minDuration
- *         schema:
- *           type: integer
- *           minimum: 0
- *         description: Minimum duration in minutes
- *         example: 90
- *       - in: query
- *         name: maxDuration
- *         schema:
- *           type: integer
- *           minimum: 0
- *         description: Maximum duration in minutes
- *         example: 180
  *     responses:
  *       200:
  *         description: Movies matching the selected filters
@@ -91,8 +77,6 @@ moviesRouter.get("/search", async (req, res) => {
 
   const title = req.query.title || "";
   const genre = req.query.genre || "all";
-  const minDuration = req.query.minDuration;
-  const maxDuration = req.query.maxDuration;
 
   let movies;
   let query = "SELECT * FROM movies WHERE 1 = 1";
@@ -106,16 +90,6 @@ moviesRouter.get("/search", async (req, res) => {
   if (genre && genre !== "all") {
     query += " AND genre = ?";
     params.push(genre);
-  }
-
-  if (minDuration) {
-    query += " AND duration_minutes >= ?";
-    params.push(Number(minDuration));
-  }
-
-  if (maxDuration) {
-    query += " AND duration_minutes <= ?";
-    params.push(Number(maxDuration));
   }
 
   movies = db.prepare(query).all(...params);

@@ -16,8 +16,7 @@ describe("Booking component", () => {
     id: 1,
     title: "Test Movie",
     description: "A test movie description.",
-    genre: "Action",
-    duration_minutes: 120,
+    genres: [{ id: 28, name: "Action" }],
     poster_path: "/path/to/poster.jpg",
   };
 

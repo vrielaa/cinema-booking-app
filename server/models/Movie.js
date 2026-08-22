@@ -23,11 +23,6 @@ export const Movie = {
       description: "A brief summary of the movie's plot",
       nullable: true,
     },
-    duration_minutes: {
-      type: "integer",
-      example: 175,
-      description: "Duration of the movie in minutes",
-    },
     poster_path: {
       type: "string",
       example: "/posters/interstellar.webp",
@@ -35,5 +30,5 @@ export const Movie = {
         "Path to the movie poster image, in the public folder, webp format",
     },
   },
-  required: ["id", "title", "genre", "duration_minutes", "poster_path"],
+  required: ["id", "title", "genre", "poster_path"],
 };

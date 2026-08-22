@@ -6,6 +6,7 @@ import { screeningsRouter } from "./routes/screenings.js";
 import { roomsRouter } from "./routes/rooms.js";
 import { sessionStore } from "./sessionStore.js";
 import { authRouter } from "./routes/auth.js";
+import { tmdbRouter } from "./routes/tmdb.js";
 import dotenv from "dotenv";
 
 import swaggerUi from "swagger-ui-express";
@@ -45,6 +46,7 @@ app.use("/api/screenings", screeningsRouter);
 app.use("/api/bookings", bookingsRouter);
 app.use("/api/rooms", roomsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/tmdb", tmdbRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -18,9 +18,8 @@ describe("BookingMovieCard", () => {
   const movie = {
     id: 1,
     title: "Test Movie",
-    genre: "Action",
+    genres: [{ id: 28, name: "Action" }],
     description: "This is a test movie description.",
-    duration_minutes: 120,
     poster_path: "/test-poster.jpg",
   };
 

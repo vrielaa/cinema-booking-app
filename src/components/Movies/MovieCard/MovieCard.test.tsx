@@ -7,14 +7,13 @@ import type { Movie } from "../../../types/movie";
 const movie: Movie = {
   id: 1,
   title: "Test Movie",
-  genre: "Action",
+  genres: [{ id: 28, name: "Action" }],
   description: "Test description",
-  duration_minutes: 125,
   poster_path: "https://example.com/poster.jpg",
 };
 
 describe("MovieCard", () => {
-  it("should display the correct movie title, genre, duration and poster", () => {
+  it("should display the correct movie title, genre and poster", () => {
     //arrangement
     render(<MovieCard movie={movie} selectMovie={vi.fn()} />);
 
@@ -27,9 +26,8 @@ describe("MovieCard", () => {
       screen.getByRole("heading", { name: "Test Movie" }),
     ).toBeInTheDocument();
 
-    //is movie genre and duration rendered
+    //is movie genre rendered
     expect(screen.getByText("Action")).toBeInTheDocument();
-    expect(screen.getByText("Duration: 2h 5m")).toBeInTheDocument();
 
     //is movie poster rendered with correct src
     expect(screen.getByRole("img", { name: "Test Movie" })).toHaveAttribute(

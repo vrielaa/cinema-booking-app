@@ -27,8 +27,7 @@ const setMovieLoading = vi.fn();
 const movie: Movie = {
   id: 1,
   title: "Test Movie",
-  genre: "Action",
-  duration_minutes: 120,
+  genres: [{ id: 28, name: "Action" }],
   description: "A test movie for unit testing.",
   poster_path: "/path/to/poster.jpg",
 };
@@ -42,8 +41,7 @@ const moviesResponse: Movie[] = [
   {
     id: 2,
     title: "Test Movie 2",
-    genre: "Comedy",
-    duration_minutes: 90,
+    genres: [{ id: 35, name: "Comedy" }],
     description: "Another test movie for unit testing.",
     poster_path: "/path/to/poster2.jpg",
   },
@@ -139,10 +137,10 @@ describe("searchMovies", () => {
   it("should request movies using the provided search parameters", async () => {
     fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
-    await searchMovies("Test", "Action", 90, 150, setMovies, setMoviesLoading);
+    await searchMovies("Test", "Action", setMovies, setMoviesLoading);
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/movies/search?title=Test&genre=Action&minDuration=90&maxDuration=150",
+      "/api/movies/search?title=Test&genre=Action",
     );
     expect(setMovies).toHaveBeenCalledWith(moviesResponse);
     expect(setMoviesLoading).toHaveBeenCalledTimes(2);
@@ -156,28 +154,12 @@ describe("searchMovies", () => {
     await searchMovies(
       "Test Movie",
       "Action & Adventure",
-      90,
-      150,
       setMovies,
       setMoviesLoading,
     );
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/movies/search?title=Test%20Movie&genre=Action%20%26%20Adventure&minDuration=90&maxDuration=150",
-    );
-    expect(setMovies).toHaveBeenCalledWith(moviesResponse);
-    expect(setMoviesLoading).toHaveBeenCalledTimes(2);
-    expect(setMoviesLoading).toHaveBeenNthCalledWith(1, true);
-    expect(setMoviesLoading).toHaveBeenNthCalledWith(2, false);
-  });
-
-  it("should include empty duration parameters in the request", async () => {
-    fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
-
-    await searchMovies("Test", "Action", "", "", setMovies, setMoviesLoading);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/movies/search?title=Test&genre=Action&minDuration=&maxDuration=",
+      "/api/movies/search?title=Test%20Movie&genre=Action%20%26%20Adventure",
     );
     expect(setMovies).toHaveBeenCalledWith(moviesResponse);
     expect(setMoviesLoading).toHaveBeenCalledTimes(2);
@@ -192,7 +174,7 @@ describe("searchMovies", () => {
 
     fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
-    await searchMovies("Test", "Action", 90, 150, setMovies, setMoviesLoading);
+    await searchMovies("Test", "Action", setMovies, setMoviesLoading);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       "Error searching movies:",

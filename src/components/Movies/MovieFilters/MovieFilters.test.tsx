@@ -1,23 +1,22 @@
 import { render, act, screen, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { fetchGenres, searchMovies } from "../../../api";
+import {
+  fetchGenresFromTMDB,
+  fetchPopularMovies,
+  searchMoviesFromTMDB,
+} from "../../../api";
 import MovieFilters from "./MovieFilters";
 
 vi.mock("../../../api", () => ({
-  fetchGenres: vi.fn(),
-  searchMovies: vi.fn(),
+  fetchGenresFromTMDB: vi.fn(),
+  fetchPopularMovies: vi.fn(),
+  searchMoviesFromTMDB: vi.fn(),
 }));
 
-const fetchGenresMock = vi.mocked(fetchGenres);
-const searchMoviesMock = vi.mocked(searchMovies);
-
-const durationCases = [
-  ["under-100", "", 99],
-  ["100-129", 100, 129],
-  ["130-159", 130, 159],
-  ["160-plus", 160, ""],
-] as const;
+const fetchGenresMock = vi.mocked(fetchGenresFromTMDB);
+const fetchPopularMoviesMock = vi.mocked(fetchPopularMovies);
+const searchMoviesMock = vi.mocked(searchMoviesFromTMDB);
 
 describe("MovieFilters", () => {
   afterEach(() => {
@@ -34,7 +33,6 @@ describe("MovieFilters", () => {
       screen.getByRole("searchbox", { name: "Title" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Genre" })).toBeDisabled();
-    expect(screen.getByRole("combobox", { name: "Duration" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Clear" })).toBeInTheDocument();
   });
 
@@ -52,11 +50,7 @@ describe("MovieFilters", () => {
       expect.any(Function),
       expect.any(Function),
     );
-    expect(searchMoviesMock).toHaveBeenCalledWith(
-      "",
-      "all",
-      "",
-      "",
+    expect(fetchPopularMoviesMock).toHaveBeenCalledWith(
       setMovies,
       setMoviesLoading,
     );
@@ -97,8 +91,6 @@ describe("MovieFilters", () => {
     expect(searchMoviesMock).toHaveBeenCalledWith(
       "Batman",
       "all",
-      "",
-      "",
       setMovies,
       setMoviesLoading,
     );
@@ -107,7 +99,10 @@ describe("MovieFilters", () => {
   it("should change the genre filter and search movies", async () => {
     fetchGenresMock.mockImplementationOnce(
       async (setGenres, setGenresLoading) => {
-        setGenres(["Action", "Comedy"]);
+        setGenres([
+          { id: 28, name: "Action" },
+          { id: 35, name: "Comedy" },
+        ]);
         setGenresLoading(false);
       },
     );
@@ -129,55 +124,24 @@ describe("MovieFilters", () => {
 
     expect(genreSelect).toBeEnabled();
 
-    await user.selectOptions(genreSelect, "Action");
-    expect(genreSelect).toHaveValue("Action");
+    await user.selectOptions(genreSelect, "28");
+    expect(genreSelect).toHaveValue("28");
 
     expect(searchMoviesMock).toHaveBeenCalledWith(
       "",
-      "Action",
-      "",
-      "",
+      "28",
       setMovies,
       setMoviesLoading,
     );
   });
 
-  it.each(durationCases)(
-    "should search movies with the %s duration filter",
-    async (durationValue, expectedMinDuration, expectedMaxDuration) => {
-      const setMovies = vi.fn();
-      const setMoviesLoading = vi.fn();
-      const user = userEvent.setup();
-
-      render(
-        <MovieFilters
-          setMovies={setMovies}
-          setMoviesLoading={setMoviesLoading}
-        />,
-      );
-
-      searchMoviesMock.mockClear();
-
-      const durationSelect = screen.getByRole("combobox", { name: "Duration" });
-
-      await user.selectOptions(durationSelect, durationValue);
-      expect(durationSelect).toHaveValue(durationValue);
-
-      expect(searchMoviesMock).toHaveBeenCalledWith(
-        "",
-        "all",
-        expectedMinDuration,
-        expectedMaxDuration,
-        setMovies,
-        setMoviesLoading,
-      );
-    },
-  );
-
   it("should reset all filters when the Clear button is clicked", async () => {
     fetchGenresMock.mockImplementationOnce(
       async (setGenres, setGenresLoading) => {
-        setGenres(["Action", "Comedy"]);
+        setGenres([
+          { id: 28, name: "Action" },
+          { id: 35, name: "Comedy" },
+        ]);
         setGenresLoading(false);
       },
     );
@@ -195,30 +159,22 @@ describe("MovieFilters", () => {
 
     const titleInput = screen.getByRole("searchbox", { name: "Title" });
     const genreSelect = screen.getByRole("combobox", { name: "Genre" });
-    const durationSelect = screen.getByRole("combobox", { name: "Duration" });
     const clearButton = screen.getByRole("button", { name: "Clear" });
 
     await user.type(titleInput, "Batman");
-    await user.selectOptions(genreSelect, "Action");
-    await user.selectOptions(durationSelect, "100-129");
+    await user.selectOptions(genreSelect, "28");
 
     expect(titleInput).toHaveValue("Batman");
-    expect(genreSelect).toHaveValue("Action");
-    expect(durationSelect).toHaveValue("100-129");
+    expect(genreSelect).toHaveValue("28");
 
-    searchMoviesMock.mockClear();
+    fetchPopularMoviesMock.mockClear();
 
     await user.click(clearButton);
 
     expect(titleInput).toHaveValue("");
     expect(genreSelect).toHaveValue("all");
-    expect(durationSelect).toHaveValue("all");
 
-    expect(searchMoviesMock).toHaveBeenCalledWith(
-      "",
-      "all",
-      "",
-      "",
+    expect(fetchPopularMoviesMock).toHaveBeenCalledWith(
       setMovies,
       setMoviesLoading,
     );

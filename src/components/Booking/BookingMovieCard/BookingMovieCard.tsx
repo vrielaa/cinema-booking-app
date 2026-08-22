@@ -9,7 +9,7 @@ export default function BookingMovieCard({
   movie: Movie;
   screening: Screening;
 }) {
-  const { poster_path: src, title, genre } = movie;
+  const { poster_path: src, title, genres } = movie;
   const {
     screening_date: date,
     screening_time: time,
@@ -23,7 +23,9 @@ export default function BookingMovieCard({
       <div className="booking-movie-info">
         <p className="booking-movie-label">Now booking</p>
         <h2 className="booking-movie-title">{title}</h2>
-        <p className="booking-movie-genre">{genre}</p>
+        <p className="booking-movie-genre">
+          {genres.map((genre) => genre.name).join(", ")}
+        </p>
 
         <div className="booking-details">
           <div className="booking-detail">

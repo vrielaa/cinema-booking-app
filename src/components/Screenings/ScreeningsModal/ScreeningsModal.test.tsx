@@ -11,9 +11,8 @@ vi.mock("../ScreeningsTable/ScreeningsTable", () => ({
 const movie: Movie = {
   id: 1,
   title: "Test Movie",
-  genre: "Drama",
+  genres: [{ id: 18, name: "Drama" }],
   description: "Test description",
-  duration_minutes: 120,
   poster_path: "https://example.com/poster.jpg",
 };
 

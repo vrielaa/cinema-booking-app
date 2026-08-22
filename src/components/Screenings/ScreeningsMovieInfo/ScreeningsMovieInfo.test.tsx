@@ -6,9 +6,8 @@ import ScreeningsMovieInfo from "./ScreeningsMovieInfo";
 const movie: Movie = {
   id: 1,
   title: "Test Movie",
-  genre: "Drama",
+  genres: [{ id: 18, name: "Drama" }],
   description: "A test movie description.",
-  duration_minutes: 125,
   poster_path: "https://example.com/test-movie.jpg",
 };
 
@@ -19,8 +18,9 @@ describe("ScreeningsMovieInfo", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: movie.title }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Duration: 2h 5m")).toBeInTheDocument();
-    expect(screen.getByText(movie.genre)).toBeInTheDocument();
+    expect(
+      screen.getByText(movie.genres.map((genre) => genre.name).join(", ")),
+    ).toBeInTheDocument();
     expect(screen.getByText(movie.description!)).toBeInTheDocument();
 
     expect(screen.getByRole("img", { name: movie.title })).toHaveAttribute(

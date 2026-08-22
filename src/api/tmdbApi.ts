@@ -1,13 +1,13 @@
 import type { Movie } from "../types/movie";
 
-export async function fetchMovies(
+export async function fetchPopularMovies(
   setMovies: (movies: Movie[]) => void,
   setMoviesLoading: (loading: boolean) => void,
 ): Promise<void> {
   setMoviesLoading(true);
 
   try {
-    const response = await fetch("/api/movies");
+    const response = await fetch("/api/tmdb/movies/popular");
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -20,43 +20,23 @@ export async function fetchMovies(
   }
 }
 
-export async function fetchMovie(
-  movieId: number,
-  setMovie: (movie: Movie) => void,
-  setMovieLoading: (loading: boolean) => void,
-): Promise<void> {
-  setMovieLoading(true);
-  try {
-    const response = await fetch(`/api/movies/${movieId}`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data: Movie = await response.json();
-    setMovie(data);
-  } catch (error) {
-    console.error("Error fetching movie:", error);
-    throw new Error("Failed to load movie.", { cause: error });
-  } finally {
-    setMovieLoading(false);
-  }
-}
-
-export async function searchMovies(
+export async function searchMoviesFromTMDB(
   title: string,
-  genre: string,
+  genreId: string,
   setMovies: (movies: Movie[]) => void,
   setMoviesLoading: (loading: boolean) => void,
 ): Promise<void> {
   setMoviesLoading(true);
-
   try {
+    const searchParams = new URLSearchParams({ title, genreId });
     const response = await fetch(
-      `/api/movies/search?title=${encodeURIComponent(title)}&genre=${encodeURIComponent(genre)}`,
+      `/api/tmdb/movies/search?${searchParams.toString()}`,
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data: Movie[] = await response.json();
+
     setMovies(data);
   } catch (error) {
     console.error("Error searching movies:", error);
@@ -65,18 +45,18 @@ export async function searchMovies(
   }
 }
 
-export async function fetchGenres(
-  setGenres: (genres: string[]) => void,
+export async function fetchGenresFromTMDB(
+  setGenres: (genres: { id: number; name: string }[]) => void,
   setGenresLoading: (loading: boolean) => void,
 ): Promise<void> {
   setGenresLoading(true);
 
   try {
-    const response = await fetch("/api/movies/genres");
+    const response = await fetch("/api/tmdb/genres");
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const data: string[] = await response.json();
+    const data: { id: number; name: string }[] = await response.json();
     setGenres(data);
   } catch (error) {
     console.error("Error fetching genres:", error);

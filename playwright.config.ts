@@ -37,4 +37,13 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
   ],
+
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      caret: "hide",
+      scale: "css",
+      maxDiffPixelRatio: 0.01,
+    },
+  },
 });
