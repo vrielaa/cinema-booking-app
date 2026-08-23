@@ -7,47 +7,52 @@ import type { Movie } from "../../../types/movie";
 export default function MovieFilters({
   setMoviesLoading,
   setMovies,
+  titleFilter,
+  genreId,
   page,
-  setPage,
   setTotalPages,
+  onTitleChange,
+  onGenreChange,
+  onClear,
 }: {
   setMoviesLoading: (loading: boolean) => void;
   setMovies: (movies: Movie[]) => void;
+  titleFilter: string;
+  genreId: number | null;
   page: number;
-  setPage: (page: number) => void;
   setTotalPages: (totalPages: number) => void;
+  onTitleChange: (title: string) => void;
+  onGenreChange: (genreId: number | null) => void;
+  onClear: () => void;
 }) {
-  const [titleFilter, setTitleFilter] = useState("");
-  const [genreFilter, setGenreFilter] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [genresLoading, setGenresLoading] = useState(true);
   const debouncedTitleFilter = useDebounce(titleFilter, 500);
 
-  const clearFilters = () => {
-    setTitleFilter("");
-    setGenreFilter(null);
-  };
-
   useEffect(() => {
+    const genreFilter =
+      genreId === null
+        ? null
+        : (genres.find((genre) => genre.id === genreId) ?? {
+            id: genreId,
+            name: "",
+          });
+
     searchMovies(
       debouncedTitleFilter,
       genreFilter,
       setMovies,
       setMoviesLoading,
       page,
-      setPage,
       setTotalPages,
     );
   }, [
     debouncedTitleFilter,
-    genreFilter,
+    genreId,
+    genres,
     setMovies,
     setMoviesLoading,
     page,
-    setPage,
     setTotalPages,
   ]);
 
@@ -78,8 +83,7 @@ export default function MovieFilters({
             placeholder="Search by title"
             value={titleFilter}
             onChange={(event) => {
-              setTitleFilter(event.target.value);
-              setPage(1);
+              onTitleChange(event.target.value);
             }}
           />
         </label>
@@ -89,13 +93,13 @@ export default function MovieFilters({
           <select
             id="genre-filter"
             className="movie-filter-select"
-            value={genreFilter === null ? "all" : String(genreFilter.id)}
+            value={genreId === null ? "all" : String(genreId)}
             onChange={(event) => {
-              const selectedGenre = genres.find(
-                (g) => String(g.id) === event.target.value,
+              onGenreChange(
+                event.target.value === "all"
+                  ? null
+                  : Number(event.target.value),
               );
-              setGenreFilter(selectedGenre || null);
-              setPage(1);
             }}
             disabled={genresLoading}
           >
@@ -114,10 +118,7 @@ export default function MovieFilters({
           <button
             className="movie-filter-button movie-filter-clear-button"
             type="button"
-            onClick={() => {
-              clearFilters();
-              setPage(1);
-            }}
+            onClick={onClear}
           >
             Clear
           </button>

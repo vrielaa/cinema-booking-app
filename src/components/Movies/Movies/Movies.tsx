@@ -6,10 +6,15 @@ import Modal from "../../Screenings/ScreeningsModal/ScreeningsModal";
 import { fetchScreeningsForMovie } from "../../../api";
 import type { Movie } from "../../../types/movie";
 import type { Screening } from "../../../types/screening";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+
+const moviesRoute = getRouteApi("/movies");
 
 function Movies() {
+  const { title, genre, page } = moviesRoute.useSearch();
+  const navigate = useNavigate({ from: "/movies" });
+
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [screenings, setScreenings] = useState<Screening[]>([]);
   const [focusedMovie, setFocusedMovie] = useState<Movie | null>(null);
@@ -41,9 +46,40 @@ function Movies() {
       <MovieFilters
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
+        titleFilter={title}
+        genreId={genre}
         page={page}
-        setPage={setPage}
         setTotalPages={setTotalPages}
+        onTitleChange={(nextTitle) => {
+          navigate({
+            search: (previous) => ({
+              ...previous,
+              title: nextTitle,
+              page: 1,
+            }),
+            replace: true,
+          });
+        }}
+        onGenreChange={(nextGenreId) => {
+          navigate({
+            search: (previous) => ({
+              ...previous,
+              genre: nextGenreId,
+              page: 1,
+            }),
+            replace: true,
+          });
+        }}
+        onClear={() => {
+          navigate({
+            search: {
+              title: "",
+              genre: null,
+              page: 1,
+            },
+            replace: true,
+          });
+        }}
       />
 
       {moviesLoading ? (
@@ -76,7 +112,14 @@ function Movies() {
         <button
           className="pagination-button"
           type="button"
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          onClick={() => {
+            navigate({
+              search: (previous) => ({
+                ...previous,
+                page: Math.max(previous.page - 1, 1),
+              }),
+            });
+          }}
           disabled={page === 1}
         >
           Previous
@@ -87,7 +130,14 @@ function Movies() {
         <button
           className="pagination-button"
           type="button"
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          onClick={() => {
+            navigate({
+              search: (previous) => ({
+                ...previous,
+                page: Math.min(previous.page + 1, totalPages),
+              }),
+            });
+          }}
           disabled={page === totalPages}
         >
           Next

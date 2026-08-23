@@ -19,6 +19,29 @@ test.describe("Movie catalogue", () => {
     ).toBeVisible();
   });
 
+  test("restores movie filters from the URL", async ({
+    page,
+    programmeMovies,
+  }) => {
+    const movie = programmeMovies[0];
+    const genre = movie.genres[0];
+    const searchParams = new URLSearchParams({
+      title: movie.title,
+      genre: String(genre.id),
+      page: "1",
+    });
+
+    await page.goto(`/movies?${searchParams.toString()}`);
+
+    await expect(page.getByRole("searchbox", { name: "Title" })).toHaveValue(
+      movie.title,
+    );
+    await expect(page.getByRole("combobox", { name: "Genre" })).toHaveValue(
+      String(genre.id),
+    );
+    await expect(page.getByRole("button", { name: movie.title })).toBeVisible();
+  });
+
   test("filters a movie from the second page and resets pagination", async ({
     page,
     secondPageMovie,
@@ -46,6 +69,13 @@ test.describe("Movie catalogue", () => {
 
     await titleFilterInput.fill(secondPageMovie.title);
 
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get("title"))
+      .toBe(secondPageMovie.title);
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get("page"))
+      .toBe("1");
+
     await expect(page.getByText(/^Page 1 of/)).toBeVisible();
 
     await expect(page.getByTestId("movie-card")).toHaveCount(1);
@@ -58,7 +88,18 @@ test.describe("Movie catalogue", () => {
     });
     const genre = programmeMovies[0].genres[0];
 
+    const filteredMoviesResponse = page.waitForResponse((response) => {
+      const url = new URL(response.url());
+
+      return (
+        url.pathname === "/api/movies/search" &&
+        url.searchParams.get("genre") === String(genre.id) &&
+        response.ok()
+      );
+    });
+
     await genreFilterSelect.selectOption(String(genre.id));
+    await filteredMoviesResponse;
 
     await expect(genreFilterSelect).toHaveValue(String(genre.id));
 

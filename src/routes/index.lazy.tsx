@@ -1,8 +1,11 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-
-// routes/index.lazy.jsx
-import Movies from "../components/Movies/Movies/Movies";
+import { createLazyFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/")({
-  component: Movies,
+  component: () => (
+    <Navigate
+      to="/movies"
+      search={{ title: "", genre: null, page: 1 }}
+      replace
+    />
+  ),
 });

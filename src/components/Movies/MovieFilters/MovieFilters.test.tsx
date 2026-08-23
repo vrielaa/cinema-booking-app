@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { fetchGenresFromTMDB, searchMovies } from "../../../api";
 import MovieFilters from "./MovieFilters";
+import { useState } from "react";
+import type { Movie } from "../../../types/movie";
 
 vi.mock("../../../api", () => ({
   fetchGenresFromTMDB: vi.fn(),
@@ -12,21 +14,42 @@ vi.mock("../../../api", () => ({
 const fetchGenresMock = vi.mocked(fetchGenresFromTMDB);
 const searchMoviesMock = vi.mocked(searchMovies);
 
+function MovieFiltersHarness({
+  setMovies = vi.fn(),
+  setMoviesLoading = vi.fn(),
+}: {
+  setMovies?: (movies: Movie[]) => void;
+  setMoviesLoading?: (loading: boolean) => void;
+}) {
+  const [titleFilter, setTitleFilter] = useState("");
+  const [genreId, setGenreId] = useState<number | null>(null);
+  const [setTotalPages] = useState(() => vi.fn());
+
+  return (
+    <MovieFilters
+      setMovies={setMovies}
+      setMoviesLoading={setMoviesLoading}
+      titleFilter={titleFilter}
+      genreId={genreId}
+      page={1}
+      setTotalPages={setTotalPages}
+      onTitleChange={setTitleFilter}
+      onGenreChange={setGenreId}
+      onClear={() => {
+        setTitleFilter("");
+        setGenreId(null);
+      }}
+    />
+  );
+}
+
 describe("MovieFilters", () => {
   afterEach(() => {
     vi.clearAllTimers();
     vi.useRealTimers();
   });
   it("should display all filter controls", () => {
-    render(
-      <MovieFilters
-        setMovies={vi.fn()}
-        setMoviesLoading={vi.fn()}
-        page={1}
-        setPage={vi.fn()}
-        setTotalPages={vi.fn()}
-      />,
-    );
+    render(<MovieFiltersHarness />);
 
     expect(
       screen.getByRole("heading", { level: 2, name: "Browse the programme" }),
@@ -42,12 +65,9 @@ describe("MovieFilters", () => {
     const setMovies = vi.fn();
     const setMoviesLoading = vi.fn();
     render(
-      <MovieFilters
+      <MovieFiltersHarness
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
-        page={1}
-        setPage={vi.fn()}
-        setTotalPages={vi.fn()}
       />,
     );
 
@@ -62,7 +82,6 @@ describe("MovieFilters", () => {
       setMoviesLoading,
       1,
       expect.any(Function),
-      expect.any(Function),
     );
   });
 
@@ -72,12 +91,9 @@ describe("MovieFilters", () => {
     const setMoviesLoading = vi.fn();
 
     render(
-      <MovieFilters
+      <MovieFiltersHarness
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
-        page={1}
-        setPage={vi.fn()}
-        setTotalPages={vi.fn()}
       />,
     );
 
@@ -108,7 +124,6 @@ describe("MovieFilters", () => {
       setMoviesLoading,
       1,
       expect.any(Function),
-      expect.any(Function),
     );
   });
 
@@ -128,12 +143,9 @@ describe("MovieFilters", () => {
     const user = userEvent.setup();
 
     render(
-      <MovieFilters
+      <MovieFiltersHarness
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
-        page={1}
-        setPage={vi.fn()}
-        setTotalPages={vi.fn()}
       />,
     );
 
@@ -152,7 +164,6 @@ describe("MovieFilters", () => {
       setMovies,
       setMoviesLoading,
       1,
-      expect.any(Function),
       expect.any(Function),
     );
   });
@@ -173,12 +184,9 @@ describe("MovieFilters", () => {
     const user = userEvent.setup();
 
     render(
-      <MovieFilters
+      <MovieFiltersHarness
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
-        page={1}
-        setPage={vi.fn()}
-        setTotalPages={vi.fn()}
       />,
     );
 
@@ -205,7 +213,6 @@ describe("MovieFilters", () => {
       setMovies,
       setMoviesLoading,
       1,
-      expect.any(Function),
       expect.any(Function),
     );
   });

@@ -69,7 +69,6 @@ export async function searchMovies(
   setMovies: (movies: Movie[]) => void,
   setMoviesLoading: (loading: boolean) => void,
   page?: number,
-  setPage?: (page: number) => void,
   setTotalPages?: (totalPages: number) => void,
 ): Promise<void> {
   setMoviesLoading(true);
@@ -84,9 +83,6 @@ export async function searchMovies(
     const data: { movies: Movie[]; pagination: Pagination } =
       await response.json();
     setMovies(data.movies);
-    if (setPage) {
-      setPage(data.pagination.currentPage);
-    }
     if (setTotalPages) {
       setTotalPages(data.pagination.totalPages);
     }

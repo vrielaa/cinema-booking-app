@@ -1,9 +1,21 @@
 import { render, screen, act } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { fetchScreeningsForMovie, searchMovies } from "../../../api";
 import type { Movie } from "../../../types/movie";
 import Movies from "./Movies";
+
+const { navigateMock, useSearchMock } = vi.hoisted(() => ({
+  navigateMock: vi.fn(),
+  useSearchMock: vi.fn(),
+}));
+
+vi.mock("@tanstack/react-router", () => ({
+  getRouteApi: () => ({
+    useSearch: useSearchMock,
+  }),
+  useNavigate: () => navigateMock,
+}));
 
 vi.mock("../../../api", () => ({
   fetchGenresFromTMDB: vi.fn(),
@@ -40,6 +52,15 @@ const movie: Movie = {
 };
 
 describe("Movies", () => {
+  beforeEach(() => {
+    navigateMock.mockReset();
+    useSearchMock.mockReturnValue({
+      title: "",
+      genre: null,
+      page: 1,
+    });
+  });
+
   it("should replace the loading state with fetched movies", async () => {
     let finishSearch: () => void;
     searchMoviesMock.mockImplementationOnce(
