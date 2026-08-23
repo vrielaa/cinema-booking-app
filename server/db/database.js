@@ -14,8 +14,8 @@ db.exec(fs.readFileSync(schemaPath, "utf8")); // Creates schema if it does not e
 
 /*checking if the database is already populated with movies (we choose to check only movies table,
 because if it is populated, then the other tables are probably populated) */
-const movieCount = db.prepare("SELECT COUNT(*) AS count FROM movies").get();
+const roomCount = db.prepare("SELECT COUNT(*) AS count FROM rooms").get();
 
-if (movieCount.count === 0) {
+if (roomCount.count === 0) {
   db.exec(fs.readFileSync(seedPath, "utf8"));
 }

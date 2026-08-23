@@ -12,6 +12,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "dev": "vite",
+    "sync:programme": "node server/scripts/syncProgramme.js",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

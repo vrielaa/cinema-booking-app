@@ -11,7 +11,12 @@ const MovieCard = ({
   const { title, genres, poster_path } = movie;
 
   return (
-    <button className="movie-card" type="button" onClick={selectMovie}>
+    <button
+      className="movie-card"
+      type="button"
+      onClick={selectMovie}
+      data-testid={`movie-card`}
+    >
       <img className="movie-poster" src={poster_path} alt={title} />
       <h1 className="movie-card-title">{title}</h1>
       <p className="movie-genre">

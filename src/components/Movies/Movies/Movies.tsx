@@ -9,6 +9,8 @@ import type { Screening } from "../../../types/screening";
 
 function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [screenings, setScreenings] = useState<Screening[]>([]);
   const [focusedMovie, setFocusedMovie] = useState<Movie | null>(null);
   const [moviesLoading, setMoviesLoading] = useState(true);
@@ -36,7 +38,13 @@ function Movies() {
 
   return (
     <div className="movies-container">
-      <MovieFilters setMovies={setMovies} setMoviesLoading={setMoviesLoading} />
+      <MovieFilters
+        setMovies={setMovies}
+        setMoviesLoading={setMoviesLoading}
+        page={page}
+        setPage={setPage}
+        setTotalPages={setTotalPages}
+      />
 
       {moviesLoading ? (
         <div
@@ -64,6 +72,27 @@ function Movies() {
           close={closeScreeningsModal}
         />
       ) : null}
+      <div className="pagination-controls">
+        <button
+          className="pagination-button"
+          type="button"
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span className="pagination-status" aria-live="polite">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          className="pagination-button"
+          type="button"
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

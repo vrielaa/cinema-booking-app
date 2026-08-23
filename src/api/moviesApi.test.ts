@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { Movie } from "../types/movie";
+import type { Movie, Pagination } from "../types/movie";
 import createJsonResponse from "../test/createJsonResponse";
 import {
   fetchGenres,
@@ -24,7 +24,7 @@ afterEach(() => {
 const setMovie = vi.fn();
 const setMovieLoading = vi.fn();
 
-const movie: Movie = {
+const movie1: Movie = {
   id: 1,
   title: "Test Movie",
   genres: [{ id: 28, name: "Action" }],
@@ -32,24 +32,34 @@ const movie: Movie = {
   poster_path: "/path/to/poster.jpg",
 };
 
+const movie2: Movie = {
+  id: 2,
+  title: "Another Test Movie",
+  genres: [{ id: 35, name: "Comedy" }],
+  description: "Another test movie for unit testing.",
+  poster_path: "/path/to/poster2.jpg",
+};
+
+const movies = [movie1, movie2];
+
+const pagination: Pagination = {
+  currentPage: 1,
+  totalPages: 5,
+  totalMovies: 100,
+};
+
 // MOVIES
 const setMovies = vi.fn();
 const setMoviesLoading = vi.fn();
 
-const moviesResponse: Movie[] = [
-  movie,
-  {
-    id: 2,
-    title: "Test Movie 2",
-    genres: [{ id: 35, name: "Comedy" }],
-    description: "Another test movie for unit testing.",
-    poster_path: "/path/to/poster2.jpg",
-  },
-];
+const moviesResponse = {
+  movies,
+  pagination,
+};
 
 describe("fetchMovie", () => {
   it("should request the movie from /api/movies/1", async () => {
-    fetchMock.mockResolvedValueOnce(createJsonResponse(movie));
+    fetchMock.mockResolvedValueOnce(createJsonResponse(movie1));
 
     await fetchMovie(1, setMovie, setMovieLoading);
 
@@ -57,14 +67,14 @@ describe("fetchMovie", () => {
   });
 
   it("should store the movie and finish loading after a successful response", async () => {
-    fetchMock.mockResolvedValueOnce(createJsonResponse(movie));
+    fetchMock.mockResolvedValueOnce(createJsonResponse(movie1));
 
     await fetchMovie(1, setMovie, setMovieLoading);
 
     expect(setMovieLoading).toHaveBeenCalledTimes(2);
     expect(setMovieLoading).toHaveBeenNthCalledWith(1, true);
     expect(setMovieLoading).toHaveBeenNthCalledWith(2, false);
-    expect(setMovie).toHaveBeenCalledWith(movie);
+    expect(setMovie).toHaveBeenCalledWith(movie1);
   });
 
   it("should throw and avoid updating the movie when the response is not ok", async () => {
@@ -87,8 +97,8 @@ describe("fetchMovies", () => {
 
     await fetchMovies(setMovies, setMoviesLoading);
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/movies");
-    expect(setMovies).toHaveBeenCalledWith(moviesResponse);
+    expect(fetchMock).toHaveBeenCalledWith("/api/movies?page=1");
+    expect(setMovies).toHaveBeenCalledWith(movies);
     expect(setMoviesLoading).toHaveBeenCalledTimes(2);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(1, true);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(2, false);
@@ -137,12 +147,17 @@ describe("searchMovies", () => {
   it("should request movies using the provided search parameters", async () => {
     fetchMock.mockResolvedValueOnce(createJsonResponse(moviesResponse));
 
-    await searchMovies("Test", "Action", setMovies, setMoviesLoading);
+    await searchMovies(
+      "Test",
+      { id: 28, name: "Action" },
+      setMovies,
+      setMoviesLoading,
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/movies/search?title=Test&genre=Action",
+      "/api/movies/search?title=Test&genre=28&page=1",
     );
-    expect(setMovies).toHaveBeenCalledWith(moviesResponse);
+    expect(setMovies).toHaveBeenCalledWith(movies);
     expect(setMoviesLoading).toHaveBeenCalledTimes(2);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(1, true);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(2, false);
@@ -153,15 +168,15 @@ describe("searchMovies", () => {
 
     await searchMovies(
       "Test Movie",
-      "Action & Adventure",
+      { id: 28, name: "Action & Adventure" },
       setMovies,
       setMoviesLoading,
     );
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/movies/search?title=Test%20Movie&genre=Action%20%26%20Adventure",
+      "/api/movies/search?title=Test%20Movie&genre=28&page=1",
     );
-    expect(setMovies).toHaveBeenCalledWith(moviesResponse);
+    expect(setMovies).toHaveBeenCalledWith(movies);
     expect(setMoviesLoading).toHaveBeenCalledTimes(2);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(1, true);
     expect(setMoviesLoading).toHaveBeenNthCalledWith(2, false);
@@ -174,7 +189,12 @@ describe("searchMovies", () => {
 
     fetchMock.mockResolvedValueOnce(createJsonResponse(null, 404, "Not Found"));
 
-    await searchMovies("Test", "Action", setMovies, setMoviesLoading);
+    await searchMovies(
+      "Test",
+      { id: 28, name: "Action" },
+      setMovies,
+      setMoviesLoading,
+    );
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       "Error searching movies:",

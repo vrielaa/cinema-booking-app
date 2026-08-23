@@ -6,6 +6,8 @@ import { SeatMap } from "./models/SeatMap.js";
 import { CreateBookingResponse } from "./models/CreateBookingResponse.js";
 import { CreateBookingRequest } from "./models/CreateBookingRequest.js";
 import { ErrorResponse } from "./models/ErrorResponse.js";
+import { Pagination } from "./models/Pagination.js";
+import { PaginatedMoviesResponse } from "./models/PaginatedMoviesResponse.js";
 
 const options = {
   definition: {
@@ -48,6 +50,8 @@ const options = {
         CreateBookingResponse: CreateBookingResponse,
         CreateBookingRequest: CreateBookingRequest,
         ErrorResponse: ErrorResponse,
+        Pagination: Pagination,
+        PaginatedMoviesResponse: PaginatedMoviesResponse,
       },
     },
   },

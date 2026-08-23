@@ -5,3 +5,9 @@ export type Movie = {
   description: string | null;
   poster_path: string;
 };
+
+export type Pagination = {
+  currentPage: number;
+  totalPages: number;
+  totalMovies: number;
+};

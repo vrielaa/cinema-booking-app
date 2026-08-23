@@ -1,22 +1,16 @@
 import { render, act, screen, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import {
-  fetchGenresFromTMDB,
-  fetchPopularMovies,
-  searchMoviesFromTMDB,
-} from "../../../api";
+import { fetchGenresFromTMDB, searchMovies } from "../../../api";
 import MovieFilters from "./MovieFilters";
 
 vi.mock("../../../api", () => ({
   fetchGenresFromTMDB: vi.fn(),
-  fetchPopularMovies: vi.fn(),
-  searchMoviesFromTMDB: vi.fn(),
+  searchMovies: vi.fn(),
 }));
 
 const fetchGenresMock = vi.mocked(fetchGenresFromTMDB);
-const fetchPopularMoviesMock = vi.mocked(fetchPopularMovies);
-const searchMoviesMock = vi.mocked(searchMoviesFromTMDB);
+const searchMoviesMock = vi.mocked(searchMovies);
 
 describe("MovieFilters", () => {
   afterEach(() => {
@@ -24,7 +18,15 @@ describe("MovieFilters", () => {
     vi.useRealTimers();
   });
   it("should display all filter controls", () => {
-    render(<MovieFilters setMovies={vi.fn()} setMoviesLoading={vi.fn()} />);
+    render(
+      <MovieFilters
+        setMovies={vi.fn()}
+        setMoviesLoading={vi.fn()}
+        page={1}
+        setPage={vi.fn()}
+        setTotalPages={vi.fn()}
+      />,
+    );
 
     expect(
       screen.getByRole("heading", { level: 2, name: "Browse the programme" }),
@@ -43,6 +45,9 @@ describe("MovieFilters", () => {
       <MovieFilters
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
+        page={1}
+        setPage={vi.fn()}
+        setTotalPages={vi.fn()}
       />,
     );
 
@@ -50,9 +55,14 @@ describe("MovieFilters", () => {
       expect.any(Function),
       expect.any(Function),
     );
-    expect(fetchPopularMoviesMock).toHaveBeenCalledWith(
+    expect(searchMoviesMock).toHaveBeenCalledWith(
+      "",
+      null,
       setMovies,
       setMoviesLoading,
+      1,
+      expect.any(Function),
+      expect.any(Function),
     );
   });
 
@@ -65,6 +75,9 @@ describe("MovieFilters", () => {
       <MovieFilters
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
+        page={1}
+        setPage={vi.fn()}
+        setTotalPages={vi.fn()}
       />,
     );
 
@@ -90,9 +103,12 @@ describe("MovieFilters", () => {
 
     expect(searchMoviesMock).toHaveBeenCalledWith(
       "Batman",
-      "all",
+      null,
       setMovies,
       setMoviesLoading,
+      1,
+      expect.any(Function),
+      expect.any(Function),
     );
   });
 
@@ -115,6 +131,9 @@ describe("MovieFilters", () => {
       <MovieFilters
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
+        page={1}
+        setPage={vi.fn()}
+        setTotalPages={vi.fn()}
       />,
     );
 
@@ -129,9 +148,12 @@ describe("MovieFilters", () => {
 
     expect(searchMoviesMock).toHaveBeenCalledWith(
       "",
-      "28",
+      { id: 28, name: "Action" },
       setMovies,
       setMoviesLoading,
+      1,
+      expect.any(Function),
+      expect.any(Function),
     );
   });
 
@@ -154,6 +176,9 @@ describe("MovieFilters", () => {
       <MovieFilters
         setMovies={setMovies}
         setMoviesLoading={setMoviesLoading}
+        page={1}
+        setPage={vi.fn()}
+        setTotalPages={vi.fn()}
       />,
     );
 
@@ -167,16 +192,21 @@ describe("MovieFilters", () => {
     expect(titleInput).toHaveValue("Batman");
     expect(genreSelect).toHaveValue("28");
 
-    fetchPopularMoviesMock.mockClear();
+    searchMoviesMock.mockClear();
 
     await user.click(clearButton);
 
     expect(titleInput).toHaveValue("");
     expect(genreSelect).toHaveValue("all");
 
-    expect(fetchPopularMoviesMock).toHaveBeenCalledWith(
+    expect(searchMoviesMock).toHaveBeenCalledWith(
+      "",
+      null,
       setMovies,
       setMoviesLoading,
+      1,
+      expect.any(Function),
+      expect.any(Function),
     );
   });
 });

@@ -38,9 +38,14 @@
   line-height: 1.2;
 }
 
-.booking-movie-genre {
-  width: max-content;
+.booking-movie-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   margin-top: 1.2rem;
+}
+
+.booking-movie-genre {
   padding: 0.4rem 0.7rem;
 
   border: 0.1rem solid rgba(190, 145, 64, 0.45);

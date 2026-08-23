@@ -1,19 +1,18 @@
 import { render, screen, act } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { fetchPopularMovies, fetchScreeningsForMovie } from "../../../api";
+import { fetchScreeningsForMovie, searchMovies } from "../../../api";
 import type { Movie } from "../../../types/movie";
 import Movies from "./Movies";
 
 vi.mock("../../../api", () => ({
   fetchGenresFromTMDB: vi.fn(),
-  fetchPopularMovies: vi.fn(),
   fetchScreeningsForMovie: vi.fn(),
-  searchMoviesFromTMDB: vi.fn(),
+  searchMovies: vi.fn(),
 }));
 
-const fetchPopularMoviesMock = vi.mocked(fetchPopularMovies);
 const fetchScreeningsForMovieMock = vi.mocked(fetchScreeningsForMovie);
+const searchMoviesMock = vi.mocked(searchMovies);
 
 vi.mock("../../Screenings/ScreeningsModal/ScreeningsModal", () => ({
   default: ({
@@ -43,9 +42,8 @@ const movie: Movie = {
 describe("Movies", () => {
   it("should replace the loading state with fetched movies", async () => {
     let finishSearch: () => void;
-
-    fetchPopularMoviesMock.mockImplementationOnce(
-      (setMovies, setMoviesLoading) =>
+    searchMoviesMock.mockImplementationOnce(
+      async (_title, _genre, setMovies, setMoviesLoading) =>
         new Promise<void>((resolve) => {
           finishSearch = () => {
             setMovies([movie]);
@@ -81,15 +79,24 @@ describe("Movies", () => {
   });
 
   it("should open the screenings modal after selecting a movie", async () => {
-    fetchPopularMoviesMock.mockImplementationOnce(
-      async (setMovies, setMoviesLoading) => {
-        setMovies([movie]);
-        setMoviesLoading(false);
-      },
+    let finishSearch: () => void;
+    searchMoviesMock.mockImplementationOnce(
+      async (_title, _genre, setMovies, setMoviesLoading) =>
+        new Promise<void>((resolve) => {
+          finishSearch = () => {
+            setMovies([movie]);
+            setMoviesLoading(false);
+            resolve();
+          };
+        }),
     );
 
     const user = userEvent.setup();
     render(<Movies />);
+
+    await act(async () => {
+      finishSearch();
+    });
 
     const movieButton = await screen.findByRole("button", {
       name: /Test Movie/,
@@ -123,15 +130,24 @@ describe("Movies", () => {
   });
 
   it("should close the screenings modal after clicking the close button", async () => {
-    fetchPopularMoviesMock.mockImplementationOnce(
-      async (setMovies, setMoviesLoading) => {
-        setMovies([movie]);
-        setMoviesLoading(false);
-      },
+    let finishSearch: () => void;
+    searchMoviesMock.mockImplementationOnce(
+      async (_title, _genre, setMovies, setMoviesLoading) =>
+        new Promise<void>((resolve) => {
+          finishSearch = () => {
+            setMovies([movie]);
+            setMoviesLoading(false);
+            resolve();
+          };
+        }),
     );
 
     const user = userEvent.setup();
     render(<Movies />);
+
+    await act(async () => {
+      finishSearch();
+    });
 
     const movieButton = await screen.findByRole("button", {
       name: /Test Movie/,

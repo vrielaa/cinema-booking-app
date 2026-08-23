@@ -1,45 +1,55 @@
 import "./movie_filters.scss";
 import { useState, useEffect } from "react";
-import {
-  fetchGenresFromTMDB,
-  fetchPopularMovies,
-  searchMoviesFromTMDB,
-} from "../../../api";
+import { fetchGenresFromTMDB, searchMovies } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import type { Movie } from "../../../types/movie";
 
 export default function MovieFilters({
   setMoviesLoading,
   setMovies,
+  page,
+  setPage,
+  setTotalPages,
 }: {
   setMoviesLoading: (loading: boolean) => void;
   setMovies: (movies: Movie[]) => void;
+  page: number;
+  setPage: (page: number) => void;
+  setTotalPages: (totalPages: number) => void;
 }) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [genreFilter, setGenreFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [genresLoading, setGenresLoading] = useState(true);
   const debouncedTitleFilter = useDebounce(titleFilter, 500);
 
   const clearFilters = () => {
     setTitleFilter("");
-    setGenreFilter("all");
+    setGenreFilter(null);
   };
 
   useEffect(() => {
-    if (debouncedTitleFilter === "" && genreFilter === "all") {
-      fetchPopularMovies(setMovies, setMoviesLoading);
-
-      return;
-    }
-
-    searchMoviesFromTMDB(
+    searchMovies(
       debouncedTitleFilter,
       genreFilter,
       setMovies,
       setMoviesLoading,
+      page,
+      setPage,
+      setTotalPages,
     );
-  }, [debouncedTitleFilter, genreFilter, setMovies, setMoviesLoading]);
+  }, [
+    debouncedTitleFilter,
+    genreFilter,
+    setMovies,
+    setMoviesLoading,
+    page,
+    setPage,
+    setTotalPages,
+  ]);
 
   useEffect(() => {
     fetchGenresFromTMDB(setGenres, setGenresLoading);
@@ -67,7 +77,10 @@ export default function MovieFilters({
             type="search"
             placeholder="Search by title"
             value={titleFilter}
-            onChange={(event) => setTitleFilter(event.target.value)}
+            onChange={(event) => {
+              setTitleFilter(event.target.value);
+              setPage(1);
+            }}
           />
         </label>
 
@@ -76,8 +89,14 @@ export default function MovieFilters({
           <select
             id="genre-filter"
             className="movie-filter-select"
-            value={genreFilter}
-            onChange={(event) => setGenreFilter(event.target.value)}
+            value={genreFilter === null ? "all" : String(genreFilter.id)}
+            onChange={(event) => {
+              const selectedGenre = genres.find(
+                (g) => String(g.id) === event.target.value,
+              );
+              setGenreFilter(selectedGenre || null);
+              setPage(1);
+            }}
             disabled={genresLoading}
           >
             <option value="all">
@@ -95,7 +114,10 @@ export default function MovieFilters({
           <button
             className="movie-filter-button movie-filter-clear-button"
             type="button"
-            onClick={clearFilters}
+            onClick={() => {
+              clearFilters();
+              setPage(1);
+            }}
           >
             Clear
           </button>

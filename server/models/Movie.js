@@ -6,15 +6,33 @@ export const Movie = {
       example: 1,
       description: "Unique identifier for the movie",
     },
+    tmdb_id: {
+      type: "integer",
+      example: 238,
+      description: "Movie identifier from TMDB",
+    },
     title: {
       type: "string",
       example: "The Godfather",
       description: "The title of the movie",
     },
-    genre: {
-      type: "string",
-      example: "Crime",
-      description: "The genre of the movie",
+    genres: {
+      type: "array",
+      description: "TMDB genres assigned to the movie",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "integer",
+            example: 80,
+          },
+          name: {
+            type: "string",
+            example: "CRIME",
+          },
+        },
+        required: ["id", "name"],
+      },
     },
     description: {
       type: "string",
@@ -25,10 +43,10 @@ export const Movie = {
     },
     poster_path: {
       type: "string",
-      example: "/posters/interstellar.webp",
-      description:
-        "Path to the movie poster image, in the public folder, webp format",
+      example: "https://image.tmdb.org/t/p/w500/example.jpg",
+      description: "Full URL of the movie poster image",
+      nullable: true,
     },
   },
-  required: ["id", "title", "genre", "poster_path"],
+  required: ["id", "tmdb_id", "title", "genres"],
 };

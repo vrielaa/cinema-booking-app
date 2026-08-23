@@ -6,13 +6,13 @@ test.describe("Booking flow", () => {
   }) => {
     await bookingPage.page.goto("/");
 
-    const duneMovieCard = bookingPage.page.getByRole("button", {
-      name: /Dune: Part Two/,
+    const spiderManMovieCard = bookingPage.page.getByRole("button", {
+      name: "Spider-Man: Brand New Day",
     });
 
-    await expect(duneMovieCard).toBeVisible();
+    await expect(spiderManMovieCard).toBeVisible();
 
-    await duneMovieCard.click();
+    await spiderManMovieCard.click();
 
     await expect(bookingPage.page.getByRole("dialog")).toBeVisible();
     await expect(bookingPage.page.getByRole("table")).toBeVisible();
@@ -43,7 +43,7 @@ test.describe("Booking flow", () => {
 
     await expect(
       bookingPage.page.getByRole("heading", {
-        name: "Dune: Part Two",
+        name: "Spider-Man: Brand New Day",
         level: 2,
       }),
     ).toBeVisible();

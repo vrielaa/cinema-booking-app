@@ -1,13 +1,14 @@
 CREATE TABLE IF NOT EXISTS movies (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tmdb_id INTEGER NOT NULL UNIQUE,
   title TEXT NOT NULL,
-  genre TEXT NOT NULL,
+  genres TEXT NOT NULL,
   description TEXT,
-  poster_path TEXT NOT NULL
+  poster_path TEXT
 );
 
 CREATE TABLE IF NOT EXISTS rooms (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   row_count INTEGER NOT NULL,
   seats_per_row INTEGER NOT NULL
 );
@@ -40,4 +41,11 @@ CREATE TABLE IF NOT EXISTS bookings (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (screening_id) REFERENCES screenings(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS unique_room_screening_time
+ON screenings (
+  room_id,
+  screening_date,
+  screening_time
 );

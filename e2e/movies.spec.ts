@@ -1,72 +1,88 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/programme.fixture.js";
 
 test.describe("Movie catalogue", () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, programmeMovies }) => {
     await page.goto("/");
 
     await expect(
       page.getByRole("heading", {
-        name: "Browse the programme",
+        name: programmeMovies[0].title,
       }),
     ).toBeVisible();
   });
 
-  test("displays the movie catalogue", async ({ page }) => {
+  test("displays the movie catalogue", async ({ page, programmeMovies }) => {
     await expect(
       page.getByRole("button", {
-        name: /Dune: Part Two/,
+        name: programmeMovies[0].title,
       }),
     ).toBeVisible();
   });
 
-  test("filters movies by title", async ({ page }) => {
+  test("filters a movie from the second page and resets pagination", async ({
+    page,
+    secondPageMovie,
+  }) => {
     const titleFilterInput = page.getByRole("searchbox", {
       name: "Title",
     });
 
-    const duneMovieCard = page.getByRole("button", {
-      name: /Dune: Part Two/,
+    const nextButton = page.getByRole("button", {
+      name: "Next",
     });
 
-    await expect(duneMovieCard).toBeVisible();
-
-    await titleFilterInput.fill("Batman");
-
-    const batmanMovieCard = page.getByRole("button", {
-      name: /The Batman/,
+    const movieCard = page.getByRole("button", {
+      name: secondPageMovie.title,
     });
-    await expect(batmanMovieCard).toBeVisible();
 
-    await expect(duneMovieCard).toHaveCount(0);
+    await expect(page.getByText(/^Page 1 of/)).toBeVisible();
+
+    await expect(movieCard).toHaveCount(0);
+
+    await nextButton.click();
+
+    await expect(page.getByText(/^Page 2 of/)).toBeVisible();
+    await expect(movieCard).toBeVisible();
+
+    await titleFilterInput.fill(secondPageMovie.title);
+
+    await expect(page.getByText(/^Page 1 of/)).toBeVisible();
+
+    await expect(page.getByTestId("movie-card")).toHaveCount(1);
+    await expect(movieCard).toBeVisible();
   });
 
-  test("filters movies by genre", async ({ page }) => {
+  test("filters movies by genre", async ({ page, programmeMovies }) => {
     const genreFilterSelect = page.getByRole("combobox", {
       name: "Genre",
     });
+    const genre = programmeMovies[0].genres[0];
 
-    const duneMovieCard = page.getByRole("button", {
-      name: /Dune: Part Two/,
+    await genreFilterSelect.selectOption(String(genre.id));
+
+    await expect(genreFilterSelect).toHaveValue(String(genre.id));
+
+    const allMovieCards = page.getByTestId("movie-card");
+
+    await expect(allMovieCards.first()).toBeVisible();
+    const allMovieCardsCount = await allMovieCards.count();
+
+    const movieCards = page.getByRole("button", {
+      name: genre.name,
     });
 
-    await expect(duneMovieCard).toBeVisible();
-
-    await genreFilterSelect.selectOption("ACTION");
-
-    const maverickMovieCard = page.getByRole("button", {
-      name: /Maverick/,
-    });
-    await expect(maverickMovieCard).toBeVisible();
-
-    await expect(duneMovieCard).toHaveCount(0);
+    await expect(movieCards).toHaveCount(allMovieCardsCount);
   });
 
-  test("clears filters", async ({ page }) => {
-    const duneMovieCard = page.getByRole("button", {
-      name: /Dune: Part Two/,
+  test("clears filters and sets page to 1", async ({
+    page,
+    programmeMovies,
+  }) => {
+    const firstMovieCard = page.getByRole("button", {
+      name: programmeMovies[0].title,
     });
 
-    await expect(duneMovieCard).toBeVisible();
+    await expect(firstMovieCard).toBeVisible();
 
     const titleFilterInput = page.getByRole("searchbox", {
       name: "Title",
@@ -75,42 +91,45 @@ test.describe("Movie catalogue", () => {
     const genreFilterSelect = page.getByRole("combobox", {
       name: "Genre",
     });
+
+    const genre = programmeMovies[0].genres[0];
 
     const clearFiltersButton = page.getByRole("button", {
       name: "Clear",
     });
 
-    await titleFilterInput.fill("Batman");
-    await genreFilterSelect.selectOption("ACTION");
+    await titleFilterInput.fill("toy story");
+    await genreFilterSelect.selectOption(String(genre.id));
 
-    await expect(titleFilterInput).toHaveValue("Batman");
-    await expect(genreFilterSelect).toHaveValue("ACTION");
+    await expect(titleFilterInput).toHaveValue("toy story");
+    await expect(genreFilterSelect).toHaveValue(String(genre.id));
 
-    await expect(duneMovieCard).toHaveCount(0);
+    await expect(firstMovieCard).toHaveCount(0);
 
     await clearFiltersButton.click();
 
     await expect(titleFilterInput).toHaveValue("");
     await expect(genreFilterSelect).toHaveValue("all");
-    await expect(duneMovieCard).toBeVisible();
+    await expect(firstMovieCard).toBeVisible();
   });
 
   test("opens and closes movie details dialog for a selected movie", async ({
     page,
+    programmeMovies,
   }) => {
-    const duneMovieCard = page.getByRole("button", {
-      name: /Dune: Part Two/,
+    const firstMovieCard = page.getByRole("button", {
+      name: programmeMovies[0].title,
     });
 
-    await expect(duneMovieCard).toBeVisible();
+    await expect(firstMovieCard).toBeVisible();
 
-    await duneMovieCard.click();
+    await firstMovieCard.click();
     const movieDialog = page.getByRole("dialog");
     await expect(movieDialog).toBeVisible();
 
     await expect(
       movieDialog.getByRole("heading", {
-        name: /Dune: Part Two/,
+        name: programmeMovies[0].title,
       }),
     ).toBeVisible();
 

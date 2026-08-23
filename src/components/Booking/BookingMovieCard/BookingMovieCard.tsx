@@ -23,8 +23,12 @@ export default function BookingMovieCard({
       <div className="booking-movie-info">
         <p className="booking-movie-label">Now booking</p>
         <h2 className="booking-movie-title">{title}</h2>
-        <p className="booking-movie-genre">
-          {genres.map((genre) => genre.name).join(", ")}
+        <p className="booking-movie-genres">
+          {genres.map((genre) => (
+            <span className="booking-movie-genre" key={genre.id}>
+              {genre.name}
+            </span>
+          ))}
         </p>
 
         <div className="booking-details">

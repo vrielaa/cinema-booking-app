@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/database.js";
-import { delay } from "../utils.js";
+import { delay, parseMovie, parsePage } from "../utils.js";
 
 export const moviesRouter = Router();
 
@@ -10,18 +10,25 @@ export const moviesRouter = Router();
  *   get:
  *     tags:
  *       - Movies
- *     summary: Get all movies
+ *     summary: Get a paginated list of movies
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
  *     responses:
  *       200:
- *         description: A list of all movies
+ *         description: A paginated list of movies
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/Movie"
+ *               $ref: "#/components/schemas/PaginatedMoviesResponse"
  */
 moviesRouter.get("/", async (req, res) => {
+  //implement pagination
   const movieResponseDelay =
     process.env.NODE_ENV === "development"
       ? Number(process.env.DELAY_MS ?? 0)
@@ -30,8 +37,31 @@ moviesRouter.get("/", async (req, res) => {
   if (movieResponseDelay > 0) {
     await delay(movieResponseDelay);
   }
-  const movies = db.prepare("SELECT * FROM movies").all();
-  res.json(movies);
+
+  const page = parsePage(req.query.page);
+  const maxMoviesPerPage = 16;
+  const offset = (page - 1) * maxMoviesPerPage;
+
+  const totalMovies = db
+    .prepare("SELECT COUNT(*) AS count FROM movies")
+    .get().count;
+
+  const totalPages = Math.max(Math.ceil(totalMovies / maxMoviesPerPage), 1);
+
+  const movies = db
+    .prepare("SELECT * FROM movies ORDER BY id ASC LIMIT ? OFFSET ?")
+    .all(maxMoviesPerPage, offset);
+
+  const parsedMovies = movies.map(parseMovie);
+
+  res.json({
+    movies: parsedMovies,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalMovies,
+    },
+  });
 });
 
 // Search and filter movies
@@ -53,17 +83,22 @@ moviesRouter.get("/", async (req, res) => {
  *         name: genre
  *         schema:
  *           type: string
- *         description: Movie genre. Use all or omit the parameter to include every genre.
- *         example: Crime
+ *         description: TMDB genre ID. Use all or omit the parameter to include every genre.
+ *         example: "80"
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
  *     responses:
  *       200:
  *         description: Movies matching the selected filters
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/Movie"
+ *               $ref: "#/components/schemas/PaginatedMoviesResponse"
  */
 moviesRouter.get("/search", async (req, res) => {
   const movieResponseDelay =
@@ -75,10 +110,12 @@ moviesRouter.get("/search", async (req, res) => {
     await delay(movieResponseDelay);
   }
 
-  const title = req.query.title || "";
-  const genre = req.query.genre || "all";
+  const genreFromQuery = req.query.genre;
 
-  let movies;
+  let genreId = genreFromQuery !== "all" ? parseInt(genreFromQuery, 10) : "all";
+
+  const title = req.query.title || "";
+
   let query = "SELECT * FROM movies WHERE 1 = 1";
   const params = [];
 
@@ -87,40 +124,39 @@ moviesRouter.get("/search", async (req, res) => {
     params.push(`%${title}%`);
   }
 
-  if (genre && genre !== "all") {
-    query += " AND genre = ?";
-    params.push(genre);
+  if (genreId && genreId !== "all") {
+    query += `
+      AND EXISTS (
+        SELECT 1
+        FROM json_each(movies.genres) AS genre
+        WHERE json_extract(genre.value, '$.id') = ?
+        )`;
+    params.push(genreId);
   }
 
-  movies = db.prepare(query).all(...params);
+  //paginate the results
+  const page = parsePage(req.query.page);
+  const maxMoviesPerPage = 16;
+  const offset = (page - 1) * maxMoviesPerPage;
 
-  res.json(movies);
-});
+  const totalMovies = db
+    .prepare(`SELECT COUNT(*) AS count FROM (${query})`)
+    .get(...params).count;
+  const totalPages = Math.max(Math.ceil(totalMovies / maxMoviesPerPage), 1);
 
-/**
- * @openapi
- * /api/movies/genres:
- *   get:
- *     tags:
- *       - Movies
- *     summary: Get all movie genres
- *     responses:
- *       200:
- *         description: A list of unique movie genres
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: string
- *             example:
- *               - Crime
- *               - Drama
- *               - Science Fiction
- */
-moviesRouter.get("/genres", (req, res) => {
-  const genres = db.prepare("SELECT DISTINCT genre FROM movies").all();
-  res.json(genres.map((g) => g.genre));
+  query += " ORDER BY id ASC LIMIT ? OFFSET ?";
+  params.push(maxMoviesPerPage, offset);
+
+  const movies = db.prepare(query).all(...params);
+
+  res.json({
+    movies: movies.map(parseMovie),
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalMovies,
+    },
+  });
 });
 
 /**
@@ -160,5 +196,5 @@ moviesRouter.get("/:movieId", (req, res) => {
     return res.status(404).json({ error: "Movie not found" });
   }
 
-  res.json(movie);
+  res.json(parseMovie(movie));
 });
