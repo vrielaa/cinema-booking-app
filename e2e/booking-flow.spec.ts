@@ -3,16 +3,17 @@ import { expect, test } from "./fixtures/booking.fixture.ts";
 test.describe("Booking flow", () => {
   test("should move to booking page when a screening for a movie is selected", async ({
     bookingPage,
+    programmeMovies,
   }) => {
     await bookingPage.page.goto("/");
 
-    const spiderManMovieCard = bookingPage.page.getByRole("button", {
-      name: "Spider-Man: Brand New Day",
+    const firstMovieCard = bookingPage.page.getByRole("button", {
+      name: programmeMovies[0].title,
     });
 
-    await expect(spiderManMovieCard).toBeVisible();
+    await expect(firstMovieCard).toBeVisible();
 
-    await spiderManMovieCard.click();
+    await firstMovieCard.click();
 
     await expect(bookingPage.page.getByRole("dialog")).toBeVisible();
     await expect(bookingPage.page.getByRole("table")).toBeVisible();
@@ -30,7 +31,10 @@ test.describe("Booking flow", () => {
     await expect(bookingPage.page).toHaveURL("/booking/1");
   });
 
-  test("should load booking page correctly", async ({ bookingPage }) => {
+  test("should load booking page correctly", async ({
+    bookingPage,
+    programmeMovies,
+  }) => {
     await bookingPage.page.goto("/booking/1");
     await expect(bookingPage.page).toHaveURL("/booking/1");
 
@@ -43,7 +47,7 @@ test.describe("Booking flow", () => {
 
     await expect(
       bookingPage.page.getByRole("heading", {
-        name: "Spider-Man: Brand New Day",
+        name: programmeMovies[0].title,
         level: 2,
       }),
     ).toBeVisible();

@@ -1,9 +1,12 @@
 import { test as base, expect } from "@playwright/test";
 import { BookingPage } from "../pages/BookingPage.ts";
 import { randomUUID } from "node:crypto";
+import type { Movie } from "../../src/types/movie.ts";
+import type { PaginatedMoviesResponse } from "./programme.fixture.ts";
 
 type BookingFixtures = {
   bookingPage: BookingPage;
+  programmeMovies: Movie[];
 };
 
 export const test = base.extend<BookingFixtures>({
@@ -36,6 +39,17 @@ export const test = base.extend<BookingFixtures>({
     await bookingPage.waitUntilLoaded();
 
     await provide(bookingPage);
+  },
+  programmeMovies: async ({ request }, provide) => {
+    const response = await request.get("/api/movies/search?page=1");
+
+    expect(response.ok()).toBe(true);
+
+    const data: PaginatedMoviesResponse = await response.json();
+
+    expect(data.movies.length).toBeGreaterThan(0);
+
+    await provide(data.movies);
   },
 });
 

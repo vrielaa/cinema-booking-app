@@ -6,7 +6,7 @@ type ProgrammeFixtures = {
   secondPageMovie: Movie;
 };
 
-type PaginatedMoviesResponse = {
+export type PaginatedMoviesResponse = {
   movies: Movie[];
   pagination: {
     currentPage: number;
