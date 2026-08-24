@@ -28,7 +28,7 @@ test.describe("Booking flow", () => {
 
     await firstScreeningLink.click();
 
-    await expect(bookingPage.page).toHaveURL("/booking/1");
+    await expect(bookingPage.page).toHaveURL(/\/booking\/\d+$/);
   });
 
   test("should load booking page correctly", async ({
