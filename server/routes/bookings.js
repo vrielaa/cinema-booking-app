@@ -12,6 +12,8 @@ export const bookingsRouter = Router();
  *     tags:
  *       - Bookings
  *     summary: Create a booking
+ *     security:
+ *       - cinemaSession: []
  *     requestBody:
  *       required: true
  *       content:
@@ -27,6 +29,12 @@ export const bookingsRouter = Router();
  *               $ref: "#/components/schemas/CreateBookingResponse"
  *       409:
  *         description: One of the selected seats has already been reserved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       401:
+ *         description: Authentication required
  *         content:
  *           application/json:
  *             schema:
@@ -106,6 +114,8 @@ bookingsRouter.post("/", requireAuth, async (request, response) => {
  *     tags:
  *       - Bookings
  *     summary: Get taken seats for a screening
+ *     security:
+ *       - cinemaSession: []
  *     parameters:
  *       - in: path
  *         name: screeningId
@@ -121,6 +131,12 @@ bookingsRouter.post("/", requireAuth, async (request, response) => {
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/SeatMap"
+ *       401:
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
  */
 bookingsRouter.get("/:screeningId", requireAuth, (request, response) => {
   const { screeningId } = request.params;

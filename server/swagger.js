@@ -8,6 +8,12 @@ import { CreateBookingRequest } from "./models/CreateBookingRequest.js";
 import { ErrorResponse } from "./models/ErrorResponse.js";
 import { Pagination } from "./models/Pagination.js";
 import { PaginatedMoviesResponse } from "./models/PaginatedMoviesResponse.js";
+import { User } from "./models/User.js";
+import { RegisterRequest } from "./models/RegisterRequest.js";
+import { LoginRequest } from "./models/LoginRequest.js";
+import { AuthResponse } from "./models/AuthResponse.js";
+import { Genre } from "./models/Genre.js";
+import { TmdbMovie } from "./models/TmdbMovie.js";
 
 const options = {
   definition: {
@@ -34,6 +40,14 @@ const options = {
         name: "Bookings",
         description: "Seat availability and reservations",
       },
+      {
+        name: "Authentication",
+        description: "User accounts and cookie-based sessions",
+      },
+      {
+        name: "TMDB",
+        description: "Third-party movie catalogue data from TMDB",
+      },
     ],
     servers: [
       {
@@ -52,6 +66,20 @@ const options = {
         ErrorResponse: ErrorResponse,
         Pagination: Pagination,
         PaginatedMoviesResponse: PaginatedMoviesResponse,
+        User: User,
+        RegisterRequest: RegisterRequest,
+        LoginRequest: LoginRequest,
+        AuthResponse: AuthResponse,
+        Genre: Genre,
+        TmdbMovie: TmdbMovie,
+      },
+      securitySchemes: {
+        cinemaSession: {
+          type: "apiKey",
+          in: "cookie",
+          name: "cinema-session",
+          description: "HttpOnly session cookie created after login",
+        },
       },
     },
   },

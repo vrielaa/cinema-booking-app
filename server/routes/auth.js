@@ -5,6 +5,33 @@ import { normalizeString } from "../utils.js";
 
 export const authRouter = Router();
 
+/**
+ * @openapi
+ * /api/auth/register:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Register a user account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/RegisterRequest"
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/AuthResponse"
+ *       400:
+ *         description: Invalid registration data or email already in use
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 authRouter.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -60,6 +87,50 @@ authRouter.post("/register", async (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * /api/auth/login:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Log in and create a server-side session
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/LoginRequest"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         headers:
+ *           Set-Cookie:
+ *             description: HttpOnly cinema session cookie
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/AuthResponse"
+ *       400:
+ *         description: Email or password is missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       401:
+ *         description: Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       500:
+ *         description: Session could not be created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -103,6 +174,31 @@ authRouter.post("/login", async (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * /api/auth/logout:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Log out and destroy the current session
+ *     security:
+ *       - cinemaSession: []
+ *     responses:
+ *       204:
+ *         description: Session destroyed successfully
+ *       401:
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       500:
+ *         description: Session could not be destroyed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 authRouter.post("/logout", requireAuth, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -117,6 +213,40 @@ authRouter.post("/logout", requireAuth, (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * /api/auth/me:
+ *   get:
+ *     tags:
+ *       - Authentication
+ *     summary: Get the current authenticated user
+ *     security:
+ *       - cinemaSession: []
+ *     responses:
+ *       200:
+ *         description: Current user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: "#/components/schemas/User"
+ *               required:
+ *                 - user
+ *       401:
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       404:
+ *         description: Session user no longer exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 authRouter.get("/me", requireAuth, (req, res) => {
   const user = db
     .prepare("SELECT id, name, email, role FROM users WHERE id = ?")
