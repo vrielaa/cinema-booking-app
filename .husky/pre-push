@@ -1,0 +1,8 @@
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "Gitleaks is required. Install it with: brew install gitleaks"
+  exit 1
+fi
+
+gitleaks git --redact
+npm run test:run
+npm run build

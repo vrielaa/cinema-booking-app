@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -b && vite build",
+    "prepare": "husky",
     "preview": "vite preview",
     "server": "node server/index.js",
     "server:dev": "NODE_ENV=development DELAY_MS=1500 node server/index.js",
@@ -45,6 +46,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^15.9.0",
+    "husky": "^9.1.7",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "sass": "^1.102.0",
